@@ -6,13 +6,6 @@ class Book(models.Model):
     published_date = models.DateField(blank=True, null=True)
     text = models.TextField()
     
-    def get_random_sentence(self):
-        sentences = list(self.text.split('. '))
-        if not sentences:
-            return ""
-        import random
-        return random.choice(sentences).strip()
-    
     def __str__(self):
         return f"{self.title} by {self.author}"
     

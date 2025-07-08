@@ -2,6 +2,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('random-sentence/', views.display_random_sentence, name='display_random_sentence'),
+    path('', views.quiz, name='quiz' ),
+    path('sentence/', views.display_sentence, name='display_sentence'),
     
     ]
