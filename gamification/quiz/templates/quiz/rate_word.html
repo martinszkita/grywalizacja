@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Ranom word from the sentence: {{ random_word}}</h1> <br>
+{{ random_sentence|safe}}
+
+{% endblock %}
