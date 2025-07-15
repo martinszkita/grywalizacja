@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Ocenione słowa:</h2>
+
+<table cellspacing="0" cellpadding="5">
+    <thead>
+        <tr>
+            {% for column in table_columns %}
+                <th>{{ column }}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for rated_word in rated_words %}
+            <tr>
+                <td>{{ rated_word.id }}</td>
+                <td>{{ rated_word.rated_word }}</td>
+                <td>{{ rated_word.value }}</td>
+                <td>{{ rated_word.sentence|slice:":50" }}...</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

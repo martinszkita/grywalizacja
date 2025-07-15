@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
+from django.contrib import messages
 from django.utils.html import strip_tags
-from .models import Book
+from .models import Book, WordRating
 from .forms import RatingForm
 import random
 import re
@@ -20,10 +21,7 @@ def get_random_sentence(tekst):
 
     
 def display_sentence(request):
-
-
     book = Book.objects.get(title="Berenice")
-
     random_sentence = get_random_sentence(book.text)
     
     return render(request, 'quiz/sentence.html', {
@@ -48,7 +46,7 @@ def rate_word(request):
             rating.sentence = strip_tags(random_sentence) 
             rating.rated_word = rated_word
             rating.save()
-            # return redirect('quiz/rate_word.html')
+            messages.add_message(request,messages.SUCCESS,"Pomyslnie zapisano ocene slowa %s" % rated_word.upper() )
     else:
         form = RatingForm()
     
@@ -56,4 +54,9 @@ def rate_word(request):
     
     return render(request, 'quiz/rate_word.html', context)
 
-#### TODO dodawania word i sentence do bazy (na razie tylko value sie zapisuje)
+
+def rated_words_list(request):
+    rated_words = WordRating.objects.all()
+    table_columns = [field.name for field in WordRating._meta.fields]
+    print(table_columns)
+    return render(request, 'quiz/rated_words_list.html', {'rated_words' : rated_words, 'table_columns':table_columns})
