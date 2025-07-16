@@ -16,3 +16,8 @@ class WordRating(models.Model):
     
     def __str__(self):
         return f"{self.rated_word.upper()} rating:{self.value}, {self.sentence}"
+    
+class WordInsert(models.Model):
+    inserted_word = models.TextField()
+    # TODO dodac funkcje do wpisywania slowa w luke
+    

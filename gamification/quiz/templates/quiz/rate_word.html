@@ -3,13 +3,14 @@
 {% block content %}
 <h1>Jak oceniasz słowo <b>{{ rated_word}}</b> w zdaniu: </h1> <br>
 <p>{{ random_sentence|safe}}</p> <br>
-<p>W skali od 0-10</p>
-<form method="post">
-  {% csrf_token %}
-  {{ form }}
-  {% comment %} <input type="range" name="value" min="1" max="10"> {% endcomment %}
-  <button type="submit">Zapisz</button>
-</form>
+
+<div class="form-control">
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Zapisz</button>
+  </form>
+</div>
 
 {% if messages %}
 <ul class="messages">
