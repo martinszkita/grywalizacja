@@ -32,12 +32,17 @@ def rate_word(request):
     def mark_word(word):
         return (f"<u>{word}</u>")
     
-    book = Book.objects.get(title="Berenice")
-    random_sentence = get_random_sentence(book.text)
-    rated_word = random.choice(random_sentence.split())
-
-    random_sentence=random_sentence.replace(rated_word, mark_word(rated_word), 1)
-    
+    if request.method == 'GET':
+        book = Book.objects.get(title="Berenice")
+        random_sentence = get_random_sentence(book.text)
+        rated_word = random.choice(random_sentence.split())
+        random_sentence=random_sentence.replace(rated_word, mark_word(rated_word), 1)
+        
+        request.session['random_sentence'] = random_sentence
+        request.session['rated_word'] = rated_word
+    else:
+        random_sentence = request.session.get('random_sentence')
+        rated_word = request.session.get('rated_word')
     
     if request.method == 'POST':
         form = RatingForm(request.POST)
@@ -46,7 +51,13 @@ def rate_word(request):
             rating.sentence = strip_tags(random_sentence) 
             rating.rated_word = rated_word
             rating.save()
+            
+            del request.session['random_sentence']
+            del request.session['rated_word']
+            
+            return redirect('rate_word')
     else:
+
         form = RatingForm()
     
     context = {'random_sentence': random_sentence, 'rated_word': rated_word, "form": form}
@@ -69,6 +80,7 @@ def insert_word(request):
             return redirect('insert_word')
     else:
         form = InsertWordForm()
+        
     return render(request, 'quiz/insert_word.html', {'form': form,'random_sentence':random_sentence, 'hidden_word':hidden_word})  
 
 def rated_words_list(request):
