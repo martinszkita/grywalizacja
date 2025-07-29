@@ -1,12 +1,12 @@
 from django import forms
-from .models import WordRating
+from .models import WordRating, InsertWord
 
 class RatingForm(forms.ModelForm):
     class Meta:
         model = WordRating
-        fields = ['value', 'rated_word']
+        fields = ['value' ]
         widgets = {
-            'value': forms.NumberInput(attrs={
+            'value': forms.NumberInput( attrs={
                 'class': 'form-control',
                 'type': 'range',
                 'min': '1',
@@ -17,3 +17,19 @@ class RatingForm(forms.ModelForm):
             })
         }
         labels = {'value': "Twoja ocena w skali od 0-10"}
+
+        
+class InsertWordForm(forms.ModelForm):
+    class Meta:
+        model = InsertWord
+        fields = ['inserted_word']
+        widgets = {
+            'inserted_word' : forms.TextInput()
+        }
+        labels = {
+            'inserted_word':"Twoje słowo:"
+        }
+    
+    
+
+        

@@ -2,9 +2,10 @@
 
 {% block content%}
 
-    <a href="{% url 'rate_word' %}" class="icon-link" data-icon="brain">Ocena dopasowania</a>
-    <a href="{% url 'display_sentence' %}" class="icon-link" data-icon="brain">Wypisywanie losowego zdania</a>
-    <a href="{% url 'rated_words_list'%}" class="icon-link" data-icon="brain">Lista ocenionych słów</a>
+    <a href="{% url 'rate_word' %}" class="btn btn-primary" >Ocena dopasowania</a>
+    <a href="{% url 'display_sentence' %}" class="btn btn-primary" >Wypisywanie losowego zdania</a>
+    <a href="{% url 'insert_word'%}" class="btn btn-primary" >Wpisywanie słowa</a>
+    <a href="{% url 'rated_words_list'%}" class="btn btn-primary" >Lista ocenionych słów</a>
 
 {% endblock %}
 

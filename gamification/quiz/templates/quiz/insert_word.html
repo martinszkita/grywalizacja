@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <p>
+        Jak wstaw słowo za : <b>{{ hidden_word }} </b> <br>
+        Zdanie: {{ random_sentence|safe }}
+    </p>
+    <div class="form-control">
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+             <button type="submit"> zapisz</button>
+        </form>
+    </div>
+
+
+{% endblock %}

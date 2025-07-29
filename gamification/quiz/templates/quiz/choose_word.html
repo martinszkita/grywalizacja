@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Wybierz najbardziej pasujące słowo w zdaniu</h1>
+<p> {{ random_sentence}} </p>
+
+<div class='form-control'>
+    <form method='post'>
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type='submit'> zapisz</button>
+    </form>
+</div>
+
+{% endblock %}

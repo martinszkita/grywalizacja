@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.utils.html import strip_tags
 from .models import Book, WordRating
-from .forms import RatingForm
+from .forms import RatingForm, InsertWordForm
 import random
 import re
 
@@ -46,7 +46,6 @@ def rate_word(request):
             rating.sentence = strip_tags(random_sentence) 
             rating.rated_word = rated_word
             rating.save()
-            messages.add_message(request,messages.SUCCESS,"Pomyslnie zapisano ocene slowa %s" % rated_word.upper() )
     else:
         form = RatingForm()
     
@@ -54,6 +53,23 @@ def rate_word(request):
     
     return render(request, 'quiz/rate_word.html', context)
 
+def insert_word(request):
+    book = Book.objects.get(id=1)
+    random_sentence = get_random_sentence(book.text)
+    hidden_word = random.choice(random_sentence.split())
+    
+    if request.method == 'POST':
+        form = InsertWordForm(request.POST)
+        if form.is_valid():
+            full_form = form.save(commit=False)
+            full_form.sentence = random_sentence
+            full_form.hidden_word = hidden_word
+            full_form.save()
+    
+            return redirect('insert_word')
+    else:
+        form = InsertWordForm()
+    return render(request, 'quiz/insert_word.html', {'form': form,'random_sentence':random_sentence, 'hidden_word':hidden_word})  
 
 def rated_words_list(request):
     rated_words = WordRating.objects.all()
