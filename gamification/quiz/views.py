@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.utils.html import strip_tags
 from .models import Book, WordRating
-from .forms import RatingForm, InsertWordForm
+from .forms import RatingForm, InsertWordForm, ChooseWordForm
 import random
 import re
 
@@ -88,3 +88,56 @@ def rated_words_list(request):
     table_columns = [field.name for field in WordRating._meta.fields]
     print(table_columns)
     return render(request, 'quiz/rated_words_list.html', {'rated_words' : rated_words, 'table_columns':table_columns})
+
+def choose_word(request):
+    if request.method == 'GET':
+        book = Book.objects.get(id=1)
+        random_sentence = get_random_sentence(book.text)
+        hidden_word = random.choice(random_sentence.split())
+
+        choices = []
+        while len(choices) < 3:
+            word = random.choice(random_sentence.split())
+            if word != hidden_word and [word, word] not in choices:
+                choices.append([word, word])  # jako lista
+
+        choices.append([hidden_word, hidden_word])
+        random.shuffle(choices)
+
+        request.session['random_sentence'] = random_sentence
+        request.session['hidden_word'] = hidden_word
+        request.session['choices'] = choices
+
+    else:
+        raw_choices = request.session.get('choices')
+        if raw_choices is None:
+            return redirect('choose_word')  # sesja wygasła lub niepoprawny dostęp
+
+        choices = [tuple(choice) for choice in raw_choices]
+        random_sentence = request.session.get('random_sentence')
+        hidden_word = request.session.get('hidden_word')
+
+    if request.method == 'POST':
+        form = ChooseWordForm(choices, request.POST)
+        if form.is_valid():
+            full_form = form.save(commit=False)
+            full_form.sentence = random_sentence
+            full_form.hidden_word = hidden_word
+            full_form.option1 = choices[0]
+            full_form.save()
+
+            for key in ['random_sentence', 'hidden_word', 'choices']:
+                if key in request.session:
+                    del request.session[key]
+
+            return redirect('choose_word')
+    else:
+        form = ChooseWordForm(choices)
+
+    context = {
+        'form': form,
+        'random_sentence': random_sentence,
+        'hidden_word': hidden_word,
+    }
+
+    return render(request, 'quiz/choose_word.html', context)

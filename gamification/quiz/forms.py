@@ -1,5 +1,5 @@
 from django import forms
-from .models import WordRating, InsertWord
+from .models import WordRating, InsertWord, ChooseWord
 
 class RatingForm(forms.ModelForm):
     class Meta:
@@ -30,6 +30,19 @@ class InsertWordForm(forms.ModelForm):
             'inserted_word':"Twoje słowo:"
         }
     
-    
 
+class ChooseWordForm(forms.ModelForm):
+    def __init__(self, choices,*args, **kwargs):
+        super(ChooseWordForm, self).__init__(*args, **kwargs)
+        self.fields['chosen_word'].choices = choices
+        
+    
+    chosen_word = forms.ChoiceField(widget=forms.RadioSelect)
+    class Meta:
+        model = ChooseWord
+        fields = ['chosen_word']
+        labels = {
+            'chosen_word':'Wybierz pasujące słowo:'
+        }
+        
         

@@ -25,3 +25,14 @@ class InsertWord(models.Model):
     
     def __str__(self):
         return f"{self.inserted_word.upper()} zamiast: {self.hidden_word.upper()}, zdanie:{self.sentence[:50]} "
+    
+class ChooseWord(models.Model):        
+    sentence = models.TextField()
+    option_1 = models.CharField(max_length=100, default='brak_opcji')
+    option_2 = models.CharField(max_length=100, default='brak_opcji')
+    option_3 = models.CharField(max_length=100, default='brak_opcji')
+    option_4 = models.CharField(max_length=100, default='brak_opcji')
+    chosen_word = models.CharField(max_length=100)
+    
+    def __str__(self):
+        return f'Wybrano słowo: {self.chosen_word} spośród: {[self.option_1, self.option_2, self.option_3, self.option_4]}'
