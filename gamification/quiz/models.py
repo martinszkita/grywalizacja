@@ -32,7 +32,7 @@ class ChooseWord(models.Model):
     option_2 = models.CharField(max_length=100, default='brak_opcji')
     option_3 = models.CharField(max_length=100, default='brak_opcji')
     option_4 = models.CharField(max_length=100, default='brak_opcji')
-    chosen_word = models.CharField(max_length=100)
+    replaced_word = models.CharField(max_length=100)
     
     def __str__(self):
-        return f'Wybrano słowo: {self.chosen_word} spośród: {[self.option_1, self.option_2, self.option_3, self.option_4]}'
+        return f'Wybrano słowo: {self.replaced_word} spośród: {[self.option_1, self.option_2, self.option_3, self.option_4]}'

@@ -93,19 +93,19 @@ def choose_word(request):
     if request.method == 'GET':
         book = Book.objects.get(id=1)
         random_sentence = get_random_sentence(book.text)
-        hidden_word = random.choice(random_sentence.split())
+        replaced_word = random.choice(random_sentence.split())
 
         choices = []
         while len(choices) < 3:
             word = random.choice(random_sentence.split())
-            if word != hidden_word and [word, word] not in choices:
+            if word != replaced_word and [word, word] not in choices:
                 choices.append([word, word])  # jako lista
 
-        choices.append([hidden_word, hidden_word])
+        choices.append([replaced_word, replaced_word])
         random.shuffle(choices)
 
         request.session['random_sentence'] = random_sentence
-        request.session['hidden_word'] = hidden_word
+        request.session['replaced_word'] = replaced_word
         request.session['choices'] = choices
 
     else:
@@ -115,18 +115,22 @@ def choose_word(request):
 
         choices = [tuple(choice) for choice in raw_choices]
         random_sentence = request.session.get('random_sentence')
-        hidden_word = request.session.get('hidden_word')
+        replaced_word = request.session.get('replaced_word')
 
     if request.method == 'POST':
         form = ChooseWordForm(choices, request.POST)
         if form.is_valid():
             full_form = form.save(commit=False)
             full_form.sentence = random_sentence
-            full_form.hidden_word = hidden_word
-            full_form.option1 = choices[0]
+            full_form.replaced_word = replaced_word
+            full_form.option_1 = choices[0][0]
+            full_form.option_2 = choices[1][0]
+            full_form.option_3 = choices[2][0]
+            full_form.option_4 = choices[3][0]
+            
             full_form.save()
 
-            for key in ['random_sentence', 'hidden_word', 'choices']:
+            for key in ['random_sentence', 'replaced_word', 'choices']:
                 if key in request.session:
                     del request.session[key]
 
@@ -134,10 +138,13 @@ def choose_word(request):
     else:
         form = ChooseWordForm(choices)
 
+    random_sentence_marked = random_sentence.replace(replaced_word, f"<b>{replaced_word}</b>")
+    replaced_word_marked = f"<b>{replaced_word}</b>"
+    
     context = {
         'form': form,
-        'random_sentence': random_sentence,
-        'hidden_word': hidden_word,
+        'random_sentence_marked': random_sentence_marked,
+        'replaced_word_marked': replaced_word_marked,
     }
 
     return render(request, 'quiz/choose_word.html', context)
