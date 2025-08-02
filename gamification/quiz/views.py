@@ -67,21 +67,22 @@ def rate_word(request):
 def insert_word(request):
     book = Book.objects.get(id=1)
     random_sentence = get_random_sentence(book.text)
-    hidden_word = random.choice(random_sentence.split())
+    word = random.choice(random_sentence.split())
     
     if request.method == 'POST':
         form = InsertWordForm(request.POST)
         if form.is_valid():
             full_form = form.save(commit=False)
             full_form.sentence = random_sentence
-            full_form.hidden_word = hidden_word
+            full_form.hidden_word = word
             full_form.save()
     
             return redirect('insert_word')
     else:
         form = InsertWordForm()
-        
-    return render(request, 'quiz/insert_word.html', {'form': form,'random_sentence':random_sentence, 'hidden_word':hidden_word})  
+    
+    random_sentence_marked = random_sentence.replace(word, f'<u>{word}</u>')
+    return render(request, 'quiz/insert_word.html', {'form': form,'random_sentence_marked':random_sentence_marked, 'word':word})  
 
 def rated_words_list(request):
     rated_words = WordRating.objects.all()
