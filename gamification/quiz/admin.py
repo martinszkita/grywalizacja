@@ -1,8 +1,6 @@
 from django.contrib import admin
-from .models import Book, WordRating, InsertWord, ChooseWord
+from .models import *
 
-# Register your models here.
-admin.site.register(Book)
-admin.site.register(WordRating)
-admin.site.register(InsertWord)
-admin.site.register(ChooseWord)
+admin.site.register(Sentence)
+admin.site.register(Text)
+admin.site.register(FillMaskData)

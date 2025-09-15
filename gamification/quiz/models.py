@@ -1,38 +1,46 @@
 from django.db import models
 
-class Book(models.Model):
-    title = models.CharField(max_length=200)
-    author = models.CharField(max_length=100)
-    published_date = models.DateField(blank=True, null=True)
-    text = models.TextField()
+class Text(models.Model):
+    title = models.CharField(max_length=50)
     
     def __str__(self):
-        return f"{self.title} by {self.author}"
-    
-class WordRating(models.Model):
-    rated_word = models.CharField(max_length=50)
-    value = models.IntegerField(default=0)
+        return f"{self.title}"
+
+class Sentence(models.Model):
+    text = models.ForeignKey(Text, on_delete=models.CASCADE)
     sentence = models.TextField()
     
     def __str__(self):
-        return f"{self.rated_word.upper()} rating:{self.value}, {self.sentence}"
+        return f"{self.sentence}"
     
+class FillMaskData(models.Model):
+    sentence = models.ForeignKey(Sentence, on_delete=models.CASCADE)
+    mask_index = models.IntegerField()
+    mask_str = models.CharField(max_length=30, editable=False, blank=True, null=True)
+    option1_str = models.CharField(max_length=30)
+    option1_score = models.FloatField(default=-1.0000)
+    option2_str = models.CharField(max_length=30)
+    option2_score = models.FloatField(default=-1.0000)
+    option3_str = models.CharField(max_length=30)
+    option3_score = models.FloatField(default=-1.0000)
     
-class InsertWord(models.Model):
-    inserted_word = models.TextField()
-    sentence = models.TextField()
-    hidden_word = models.TextField()
+    def save(self, *args, **kwargs):
+        words = (self.sentence.sentence or "").split()
+        if 0 <= self.mask_index < len(words):
+            self.mask_str = words[self.mask_index]
+        else:
+            self.mask_str = ""  
+        super().save(*args, **kwargs)
+    
     
     def __str__(self):
-        return f"{self.inserted_word.upper()} zamiast: {self.hidden_word.upper()}, zdanie:{self.sentence[:50]} "
+        return f"Pytanie delfiny"
     
-class ChooseWord(models.Model):        
-    sentence = models.TextField()
-    option_1 = models.CharField(max_length=100, default='brak_opcji')
-    option_2 = models.CharField(max_length=100, default='brak_opcji')
-    option_3 = models.CharField(max_length=100, default='brak_opcji')
-    option_4 = models.CharField(max_length=100, default='brak_opcji')
-    replaced_word = models.CharField(max_length=100)
+class FillMaskAnswer(models.Model):
+    sentence = models.ForeignKey(Sentence, on_delete=models.CASCADE)
+    ans = models.IntegerField() # [1 , 2, 3]
+    note = models.TextField(blank=True, null=True)
     
     def __str__(self):
-        return f'Wybrano słowo: {self.replaced_word} spośród: {[self.option_1, self.option_2, self.option_3, self.option_4]}'
+        return f"text:{self.sentence.text.title}, sent_id:{self.sentence.id},ans:{self.ans} ..."
+    
