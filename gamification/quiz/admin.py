@@ -4,3 +4,4 @@ from .models import *
 admin.site.register(Sentence)
 admin.site.register(Text)
 admin.site.register(FillMaskData)
+admin.site.register(FillMaskAnswer)

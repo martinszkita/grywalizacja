@@ -34,13 +34,17 @@ class FillMaskData(models.Model):
     
     
     def __str__(self):
-        return f"Pytanie delfiny"
+        return f"{self.sentence.sentence}, {self.mask_index}"
     
 class FillMaskAnswer(models.Model):
-    sentence = models.ForeignKey(Sentence, on_delete=models.CASCADE)
+    id=models.BigAutoField(primary_key=True)
+    fill_mask_data = models.OneToOneField(FillMaskData, on_delete=models.CASCADE, null=True, blank=True)
     ans = models.IntegerField() # [1 , 2, 3]
     note = models.TextField(blank=True, null=True)
     
     def __str__(self):
-        return f"text:{self.sentence.text.title}, sent_id:{self.sentence.id},ans:{self.ans} ..."
+        return f"dupadupa"
+    
+
+    
     
