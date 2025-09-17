@@ -1,26 +1,20 @@
-import os
-import django
 import csv
-# from quiz.models import Text, FillMaskData, Sentence
+from .models import *
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "quiz.settings")
-django.setup()
+SENTENCE_FILE_PATH = '/home/marcin/grywalizacja/gamification/quiz/data/dolphins_sentences.csv'
+MASK_DATA_FILE_PATH = '/home/marcin/grywalizacja/gamification/quiz/data/dolphins_mask_data.csv'
 
-
-
-print("dupa")
-
-# if __name__ == '__main__':
-#     PATH_DATA = '/home/marcin/grywalizacja/gamification/quiz/data/dolphins_mask_data.csv'
-#     PATH_SENTENCES = '/home/marcin/grywalizacja/gamification/quiz/data/dolphins_sentences.csv'
-
-
-#     queries=Sentence.objects.all()
-#     sentences = [ q for q in queries]
-
-#     for q in sentences:
-#         print(sentences)
-
+def import_sentences():
+    with open(SENTENCE_FILE_PATH, 'r') as f:
+        reader = csv.DictReader(f)
+        text = Text.objects.get(title='Delfiny')
+        if not text:
+            text=Text(title='Delfiny')
+            print("nie ma modelu")
+        for r in reader:
+            sentence = Sentence(sentence = r['sentence'], text=text)
+            sentence.save()
+    
 
     
             

@@ -3,9 +3,13 @@ from .models import *
 from .forms import *
 import random
 
+def test():
+    print("dupadupa")
+
 # Create your views here.
 def quiz(request):
-    return render(request, 'quiz/quiz.html')
+    return redirect('fill_mask_question')
+    # return render(request, 'quiz/quiz.html')
 
 def fill_mask_question(request):
     context = {}
@@ -19,8 +23,6 @@ def fill_mask_question(request):
             form.save()
             return redirect('fill_mask_question')
     else:
-
-        print("view:", choices)
         form = FillMaskQuestionForm(choices=choices)
         sentence = o.sentence.sentence
         mask_index = o.mask_index

@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'quiz',
     'gamification',
     'bootstrap5',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [
