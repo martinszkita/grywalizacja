@@ -28,11 +28,8 @@ class FillMaskData(models.Model):
     option3_score = models.FloatField(default=-1.0000)
     
     def save(self, *args, **kwargs):
-        words = (self.sentence.sentence or "").split()
-        if 0 <= self.mask_index < len(words):
-            self.mask_str = words[self.mask_index]
-        else:
-            self.mask_str = ""  
+        words = (self.sentence.sentence).split()
+        self.mask_str = words[int(self.mask_index)]
         super().save(*args, **kwargs)
     
     
