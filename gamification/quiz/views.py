@@ -3,9 +3,6 @@ from .models import *
 from .forms import *
 import random
 
-def test():
-    print("dupadupa")
-
 # Create your views here.
 def quiz(request):
     return redirect('fill_mask_question')
@@ -13,20 +10,20 @@ def quiz(request):
 
 def fill_mask_question(request):
     context = {}
-    random_id = random.randint(0,20)
-    o = FillMaskData.objects.get(pk=random_id)
-    choices = [(1, o.option1_str), (2, o.option2_str), (3,o.option3_str)]
+    fill_mask_data = FillMaskData.objects.get(pk=6) # TODO
+    sentence_obj = fill_mask_data.sentence
+    choices = [(1, fill_mask_data.option1_str), (2, fill_mask_data.option2_str), (3,fill_mask_data.option3_str)]
     
     if request.method == 'POST':
-        form = FillMaskQuestionForm(request.POST, choices=choices)
+        form = FillMaskQuestionForm(request.POST, choices=choices, sentence=sentence_obj)
         if form.is_valid():
             form.save()
             return redirect('fill_mask_question')
     else:
-        form = FillMaskQuestionForm(choices=choices)
-        sentence = o.sentence.sentence
-        mask_index = o.mask_index
-        sentence_masked = sentence.split()
+        form = FillMaskQuestionForm(choices=choices, sentence=sentence_obj)
+        mask_index = fill_mask_data.mask_index
+        sentence_text = sentence_obj.sentence
+        sentence_masked = sentence_text.split()
         sentence_masked[mask_index] = '_____'
         sentence_masked=" ".join(sentence_masked)
         context['sentence'] = sentence_masked

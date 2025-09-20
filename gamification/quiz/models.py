@@ -32,21 +32,18 @@ class FillMaskData(models.Model):
         self.mask_str = words[int(self.mask_index)]
         super().save(*args, **kwargs)
     
-    
     def __str__(self):
         return f"{self.sentence.sentence}, {self.mask_index}"
     
 class FillMaskAnswer(models.Model):
     id = models.BigAutoField(primary_key=True)
-    fill_mask_data = models.ForeignKey(FillMaskData, on_delete=models.CASCADE, related_name='fill_mask_answers')
+    sentence = models.ForeignKey(Sentence, on_delete=models.CASCADE)
     ans = models.IntegerField() # [1 , 2, 3]
     note = models.TextField(blank=True, null=True)
     
     def __str__(self):
-        return f"dupadupa"
+        return f'{self.id}, {self.ans}'
     
-class Quiz(models.Model):
-    id=models.BigAutoField(primary_key=True)
     
     
 
