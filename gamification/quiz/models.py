@@ -6,18 +6,26 @@ class Text(models.Model):
     
     def __str__(self):
         return f"{self.title}"
-
-class Sentence(models.Model):
+    
+class Quiz(models.Model):
     id = models.BigAutoField(primary_key=True)
-    text = models.ForeignKey(Text, on_delete=models.CASCADE)
-    sentence = models.TextField()
+    created_at = models.DateTimeField(auto_now=True)
     
     def __str__(self):
-        return f"ID: {self.id} {self.sentence}"
+        return f'{self.id}, {self.created_at}'
+    
+class Sentence(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    text = models.ForeignKey(Text, on_delete=models.CASCADE, related_name='sentences_text')
+    sentence = models.TextField()
+    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, related_name="sentences_quiz", null=True)
+    
+    def __str__(self):
+        return f"{self.sentence}"
     
 class FillMaskData(models.Model):
     id = models.BigAutoField(primary_key=True)
-    sentence = models.ForeignKey(Sentence, on_delete=models.CASCADE)
+    sentence = models.ForeignKey(Sentence, on_delete=models.CASCADE, related_name="sentence_data")
     mask_index = models.IntegerField()
     mask_str = models.CharField(max_length=30)
     option1_str = models.CharField(max_length=30)
@@ -37,15 +45,10 @@ class FillMaskData(models.Model):
     
 class FillMaskAnswer(models.Model):
     id = models.BigAutoField(primary_key=True)
-    sentence = models.ForeignKey(Sentence, on_delete=models.CASCADE)
+    sentence = models.ForeignKey(Sentence, on_delete=models.CASCADE, related_name="answers")
     ans = models.IntegerField() # [1 , 2, 3]
     note = models.TextField(blank=True, null=True)
     
     def __str__(self):
         return f'{self.id}, {self.ans}'
-    
-    
-    
-
-    
     

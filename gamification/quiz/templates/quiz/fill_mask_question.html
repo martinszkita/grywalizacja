@@ -20,14 +20,16 @@
             {% endfor %}
         </div>
 
-        <!-- Notatka -->
-        <div class="d-grid gap-2 mt-4">
+        <!-- Kafelek "Dodaj notatkę" -->
+        <div class="d-flex justify-content-center mt-4">
             <button class="btn btn-outline-secondary btn-lg py-3 fs-5" type="button" 
                     data-bs-toggle="collapse" data-bs-target="#noteBox">
                 ➕ Dodaj notatkę
             </button>
         </div>
-        <div class="collapse mt-3" id="noteBox">
+
+        
+        <div class="collapse justify-content-center" id="noteBox">
             <div class="card card-body">
                 {{ form.note.label_tag }}
                 {{ form.note }}
