@@ -12,6 +12,11 @@ def quiz_info(request):
 
 def topic_choice(request):
     texts = Text.objects.all()
+    chosen_topic = request.GET.get('topic')
+    
+    if chosen_topic:
+        return redirect('fill_mask_question', text_name=chosen_topic, question_num=1)
+    
     return render(request, 'quiz/topic_choice.html', {'texts': texts})
 
 def fill_mask_question(request, text_name, question_num=1):

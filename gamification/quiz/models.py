@@ -3,6 +3,7 @@ from django.db import models
 class Text(models.Model):
     id = models.BigAutoField(primary_key=True)
     title = models.CharField(max_length=50, unique=True)
+    image = models.ImageField(upload_to='text_images/', blank=True, null=True)
     
     def __str__(self):
         return f"{self.title}"
@@ -50,5 +51,5 @@ class FillMaskAnswer(models.Model):
     note = models.TextField(blank=True, null=True)
     
     def __str__(self):
-        return f'{self.id}, {self.ans}'
+        return f'{self.sentence.text}, {self.id}, {self.note}'
     

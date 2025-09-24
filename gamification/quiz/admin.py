@@ -2,8 +2,9 @@ from django.contrib import admin
 from .models import *
 
 class TextAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title')
-    readonly_fields = ('id', 'title')
+    list_display = ('title',)
+    list_filter = ('title', )
+    readonly_fields = ( 'title',)
     
 class SentenceAdmin(admin.ModelAdmin):
     list_display = ('id', 'text', 'sentence')
