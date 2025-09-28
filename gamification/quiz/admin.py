@@ -23,6 +23,7 @@ admin.site.register(Sentence, SentenceAdmin)
 admin.site.register(Text, TextAdmin)
 admin.site.register(FillMaskData, FillMaskDataAdmin)
 admin.site.register(FillMaskAnswer, FillMaskAnswerAdmin)
+admin.site.register(Quiz)
     
 
     

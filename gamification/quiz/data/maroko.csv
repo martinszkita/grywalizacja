@@ -1,21 +1,21 @@
 sentence,mask_index,mask_str,option1_str,option1_score,option2_str,option2_score,option3_str,option3_score
-"Maroko to fascynujący kraj położony w północno-zachodniej Afryce, u wybrzeży Oceanu Atlantyckiego i Morza Śródziemnego, który łączy w sobie bogactwo kultur arabskich, berberyjskich i francuskich",12,i,i,0.951,oraz,0.0461,",",0.0014
-"Stolicą jest Rabat, ale najbardziej znanym miastem pozostaje Marrakesz, przyciągający turystów kolorowymi bazarami, zapachem przypraw i gwarą ulicznych targów",9,przyciągający,przyciąga,0.9528,przyciągają,0.0096,wypełniony,0.0058
-"Casablanca z kolei uchodzi za centrum gospodarcze i nowoczesne serce kraju, podczas gdy Fez słynie z najstarszego uniwersytetu świata i labiryntu średniowiecznych uliczek",8,nowoczesne,kulturalne,0.3777,handlowe,0.1669,polityczne,0.087
-"Maroko zachwyca różnorodnością krajobrazów – od złotych plaż Agadiru, przez zielone doliny gór Atlasu, aż po pustynne wydmy Sahary, które wieczorem nabierają odcieni pomarańczu i czerwieni",0,Maroko,Egipt,0.2517,Miasto,0.072,Wybrzeże,0.0714
-"Jest to monarchia konstytucyjna, a obecnym królem jest Mohammed VI, który odgrywa istotną rolę w życiu politycznym i religijnym kraju",14,w,w,0.9996,z,0.0001,przy,0.0001
-"Mieszkańcy Maroka posługują się głównie językiem arabskim i berberyjskim, a francuski pozostaje ważnym językiem administracji i biznesu",1,Maroka,miasta,0.1994,Afryki,0.1031,miasteczka,0.0685
-"Religia dominująca to islam, co znajduje odzwierciedlenie w architekturze, sztuce i codziennym rytmie życia",3,"islam,",coś,0.465,",",0.212,to,0.1985
-"Kuchnia marokańska słynie z bogactwa smaków – popularne są tagine, kuskus, miętowa herbata i słodkie wypieki",9,"tagine,",:,0.2129,zwłaszcza,0.0916,tu,0.0837
-"Marokańczycy słyną z gościnności, a tradycyjna herbata podawana jest niemal przy każdej okazji towarzyskiej",8,jest,jest,0.9827,tu,0.0033,im,0.0026
-"Kraj posiada także imponujące dziedzictwo architektoniczne – medyny, kasby, pałace i meczety stanowią świadectwo jego wielowiekowej historii",1,posiada,posiada,0.6476,ma,0.1172,to,0.112
-"W Marrakeszu szczególne wrażenie robi plac Jemaa el-Fna, gdzie codziennie spotkać można zaklinaczy węży, tancerzy, muzyków i kucharzy",4,robi,robi,0.9268,sprawia,0.0398,zrobił,0.0075
-"Maroko odgrywało ważną rolę w handlu transsaharyjskim, a jego miasta były centrami wymiany towarów, wiedzy i idei",11,centrami,centrum,0.5108,ośrodkiem,0.169,miejscem,0.1289
+"Maroko to fascynujący kraj położony w północno-zachodniej Afryce, u wybrzeży Oceanu Atlantyckiego i Morza Śródziemnego, który łączy w sobie bogactwo kultur arabskich, berberyjskich i francuskich",19,bogactwo,wpływy,0.6418,dziedzictwo,0.0771,elementy,0.0648
+"Stolicą jest Rabat, ale najbardziej znanym miastem pozostaje Marrakesz, przyciągający turystów kolorowymi bazarami, zapachem przypraw i gwarą ulicznych targów",10,turystów,turystów,0.7419,tłumy,0.0386,uwagę,0.0307
+"Casablanca z kolei uchodzi za centrum gospodarcze i nowoczesne serce kraju, podczas gdy Fez słynie z najstarszego uniwersytetu świata i labiryntu średniowiecznych uliczek",11,podczas,podczas,0.996,zwłaszcza,0.0007,Podczas,0.0004
+"Maroko zachwyca różnorodnością krajobrazów – od złotych plaż Agadiru, przez zielone doliny gór Atlasu, aż po pustynne wydmy Sahary, które wieczorem nabierają odcieni pomarańczu i czerwieni",13,"Atlasu,",",",0.9845,–,0.0021,górskich,0.0016
+"Jest to monarchia konstytucyjna, a obecnym królem jest Mohammed VI, który odgrywa istotną rolę w życiu politycznym i religijnym kraju",10,który,który,0.9873,co,0.0049,która,0.0021
+"Mieszkańcy Maroka posługują się głównie językiem arabskim i berberyjskim, a francuski pozostaje ważnym językiem administracji i biznesu",3,się,się,0.9993,sie,0.0006,sią,0.0
+"Religia dominująca to islam, co znajduje odzwierciedlenie w architekturze, sztuce i codziennym rytmie życia",8,"architekturze,",jego,0.3488,współczesnej,0.1234,jej,0.0591
+"Kuchnia marokańska słynie z bogactwa smaków – popularne są tagine, kuskus, miętowa herbata i słodkie wypieki",14,słodkie,słodkie,0.2025,domowe,0.1726,tradycyjne,0.1099
+"Marokańczycy słyną z gościnności, a tradycyjna herbata podawana jest niemal przy każdej okazji towarzyskiej",9,niemal,niemal,0.3232,prawie,0.2024,praktycznie,0.1161
+"Kraj posiada także imponujące dziedzictwo architektoniczne – medyny, kasby, pałace i meczety stanowią świadectwo jego wielowiekowej historii",12,stanowią,stanowią,0.4764,to,0.4478,–,0.0353
+"W Marrakeszu szczególne wrażenie robi plac Jemaa el-Fna, gdzie codziennie spotkać można zaklinaczy węży, tancerzy, muzyków i kucharzy",9,codziennie,codziennie,0.6597,często,0.0853,najczęściej,0.0498
+"Maroko odgrywało ważną rolę w handlu transsaharyjskim, a jego miasta były centrami wymiany towarów, wiedzy i idei",8,jego,jego,0.4165,okoliczne,0.1057,liczne,0.0772
 "Obecnie kraj rozwija się dynamicznie, stawiając na turystykę, rolnictwo i energetykę odnawialną, zwłaszcza farmy słoneczne",0,Obecnie,Nasz,0.545,Ten,0.1136,Obecnie,0.0909
-"Maroko jest też znane z rękodzieła – dywanów, ceramiki i skórzanych wyrobów, które powstają w tradycyjnych warsztatach",6,–,:,0.3184,",",0.2736,–,0.2059
-"Popularnym celem turystycznym jest Szefszawan, słynący z niebieskich uliczek, które wyglądają jak sceneria z bajki",5,słynący,znany,0.4064,słynie,0.1693,znana,0.1244
-"Góry Atlas przyciągają miłośników trekkingu i sportów zimowych, a Sahara oferuje niezapomniane wyprawy na wielbłądach i noclegi pod gwiazdami",10,oferuje,oferuje,0.4149,zapewnia,0.1467,–,0.1316
-"Maroko jest też miejscem spotkania Europy i Afryki – przez Cieśninę Gibraltarską widać wybrzeże Hiszpanii, a wpływy europejskie są widoczne w wielu aspektach życia",16,wpływy,tradycje,0.2737,wpływy,0.1969,korzenie,0.136
-"Kraj szczyci się bogatą tradycją muzyczną, w której przeplatają się dźwięki arabskie, berberyjskie i andaluzyjskie",7,której,której,0.9112,którym,0.0228,muzyce,0.0171
-"Marokańska sztuka często pełna jest geometrycznych wzorów, kaligrafii i kolorowych mozaik",10,mozaik,…,0.3601,.,0.1083,form,0.0368
-"W polityce zagranicznej Maroko odgrywa rolę pomostu między światem arabskim a Europą, a także partnera w afrykańskich inicjatywach gospodarczych",6,pomostu,pośrednika,0.8765,porozumienia,0.012,partnera,0.0119
+"Maroko jest też znane z rękodzieła – dywanów, ceramiki i skórzanych wyrobów, które powstają w tradycyjnych warsztatach",7,"dywanów,",z,0.2672,głównie,0.2301,tradycyjnej,0.0567
+"Popularnym celem turystycznym jest Szefszawan, słynący z niebieskich uliczek, które wyglądają jak sceneria z bajki",13,z,z,0.9055,do,0.0204,filmowej,0.0107
+"Góry Atlas przyciągają miłośników trekkingu i sportów zimowych, a Sahara oferuje niezapomniane wyprawy na wielbłądach i noclegi pod gwiazdami",7,"zimowych,",zimowych,0.3557,wodnych,0.3087,",",0.1749
+"Maroko jest też miejscem spotkania Europy i Afryki – przez Cieśninę Gibraltarską widać wybrzeże Hiszpanii, a wpływy europejskie są widoczne w wielu aspektach życia",12,widać,po,0.6988,i,0.0822,na,0.0602
+"Kraj szczyci się bogatą tradycją muzyczną, w której przeplatają się dźwięki arabskie, berberyjskie i andaluzyjskie",9,się,się,0.9967,sie,0.0014,różne,0.0001
+"Marokańska sztuka często pełna jest geometrycznych wzorów, kaligrafii i kolorowych mozaik",4,jest,jest,0.9777,bywa,0.0032,pięknych,0.0017
+"W polityce zagranicznej Maroko odgrywa rolę pomostu między światem arabskim a Europą, a także partnera w afrykańskich inicjatywach gospodarczych",7,między,między,0.676,pomiędzy,0.3145,miedzy,0.0091

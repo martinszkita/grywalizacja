@@ -26,7 +26,7 @@ class Sentence(models.Model):
     
 class FillMaskData(models.Model):
     id = models.BigAutoField(primary_key=True)
-    sentence = models.ForeignKey(Sentence, on_delete=models.CASCADE, related_name="sentence_data")
+    sentence = models.OneToOneField(Sentence, on_delete=models.CASCADE, related_name="sentence_data")
     mask_index = models.IntegerField()
     mask_str = models.CharField(max_length=30)
     option1_str = models.CharField(max_length=30)
@@ -49,6 +49,7 @@ class FillMaskAnswer(models.Model):
     sentence = models.ForeignKey(Sentence, on_delete=models.CASCADE, related_name="answers")
     ans = models.IntegerField() # [1 , 2, 3]
     note = models.TextField(blank=True, null=True)
+    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, null=True)
     
     def __str__(self):
         return f'{self.sentence.text}, {self.id}, {self.note}'
