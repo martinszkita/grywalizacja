@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, reverse
+from django.shortcuts import render, redirect
 from .models import *
 from .forms import *
 
@@ -15,7 +15,7 @@ def topic_choice(request):
     chosen_topic = request.GET.get('topic')
     
     if chosen_topic:
-        quiz = Quiz()
+        quiz = Quiz(text=Text.objects.get(title=chosen_topic))
         quiz.save()
         request.session['quiz_id'] = quiz.id
         
@@ -28,8 +28,8 @@ def fill_mask_question(request, text_name, question_num=1):
     sentence_q = Sentence.objects.filter(text__title=text_name).order_by('id')[question_num - 1]
     fill_mask_data = FillMaskData.objects.get(sentence=sentence_q)
     quiz_id = request.session['quiz_id']
-    print(f'quiz_id:{quiz_id}')
-    
+    question_count = Sentence.objects.all().count()
+
     choices = [
         (1, fill_mask_data.option1_str),
         (2, fill_mask_data.option2_str),
@@ -40,18 +40,20 @@ def fill_mask_question(request, text_name, question_num=1):
         form = FillMaskQuestionForm(request.POST, choices=choices, sentence=sentence_q, quiz_id=quiz_id)
         if form.is_valid():
             form.save()
-            # przekierowanie do następnego pytania
-            print(f'q_NUM:{question_num}')
-            return redirect('fill_mask_question', text_name=text_name, question_num=question_num + 1)
+            if question_num < question_count - 1:
+                return redirect('fill_mask_question', text_name=text_name, question_num=question_num + 1)
+            else:
+                return redirect('summary')
         else:
-            print(form.errors)
+            print(form.errors.as_text())
+            # TODO dac error message ze trzeba wybrac jakas opcje
+            return redirect('fill_mask_question', text_name=text_name, question_num=question_num)
     else:
         form = FillMaskQuestionForm(choices=choices, sentence=sentence_q, quiz_id=quiz_id)
         mask_index = fill_mask_data.mask_index
         sentence_text = sentence_q.sentence
         sentence_masked = sentence_text.split()
         sentence_masked[mask_index] = '_____'
-        print(sentence_masked)
         sentence_masked = " ".join(sentence_masked)
         context['sentence'] = sentence_masked
         
@@ -60,6 +62,17 @@ def fill_mask_question(request, text_name, question_num=1):
     
     return render(request, 'quiz/fill_mask_question.html', context)
    
+    
+def summary(request):
+    # do wyswietlenia : wybrany temat, jakie pytanie jaka odpowiedz
+    quiz = Quiz.objects.get(pk=request.session['quiz_id'])
+    quiz_topic = quiz.text.title
+    context = {'quiz_topic':quiz_topic.upper()}
+    
+    # fill mask summary
+    # guess replacement
+    
+    return render(request, 'quiz/summary.html', context)
     
     
 

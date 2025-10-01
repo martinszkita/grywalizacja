@@ -2,8 +2,18 @@ from django.db import models
 
 class Text(models.Model):
     id = models.BigAutoField(primary_key=True)
-    title = models.CharField(max_length=50, unique=True)
+    title = models.CharField(max_length=50)
     image = models.ImageField(upload_to='text_images/', blank=True, null=True)
+
+    class QuestionType(models.TextChoices):
+        FILL_MASK = "1", "Fill Mask"
+        GUESS_REPLACEMENT = "2", "Guess Replacement"
+
+
+    question_type = models.CharField(max_length=1, choices=QuestionType.choices)
+    
+    class Meta:
+        unique_together = ('title', 'question_type')
     
     def __str__(self):
         return f"{self.title}"
@@ -11,9 +21,10 @@ class Text(models.Model):
 class Quiz(models.Model):
     id = models.BigAutoField(primary_key=True)
     created_at = models.DateTimeField(auto_now=True)
+    text = models.OneToOneField(Text, null=True, on_delete=models.SET_NULL)
     
     def __str__(self):
-        return f'{self.id}, {self.created_at}'
+        return f'{self.id}, {self.text.title or ''}'
     
 class Sentence(models.Model):
     id = models.BigAutoField(primary_key=True)
@@ -48,9 +59,28 @@ class FillMaskAnswer(models.Model):
     id = models.BigAutoField(primary_key=True)
     sentence = models.ForeignKey(Sentence, on_delete=models.CASCADE, related_name="answers")
     ans = models.IntegerField() # [1 , 2, 3]
-    note = models.TextField(blank=True, null=True)
+    note = models.CharField(max_length=200, blank=True, null=True)
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, null=True)
     
     def __str__(self):
         return f'{self.sentence.text}, {self.id}, {self.note}'
     
+class GuessReplacementData(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    is_replacement = models.BooleanField()
+    replacement_index = models.IntegerField(null=True, blank=True, default=-1)
+    replacing_str = models.CharField(max_length=25, null=True, blank=True)
+    sentence = models.OneToOneField(Sentence, on_delete=models.CASCADE)
+    
+    def __str__(self):
+        return f'{self.id},{self.sentence}, {self.is_replacement}'
+    
+class GuessReplacementAnswer(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    ans = models.BooleanField() # 1 - replacement, 0 - no replacement
+    ans_correct = models.BooleanField()
+    note = models.CharField(max_length=200, blank=True, null=True)
+    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
+    
+    def __str__(self):
+        return f'{self.id}, ans: {self.ans}'

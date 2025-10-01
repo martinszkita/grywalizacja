@@ -1,0 +1,21 @@
+sentence,mask_index,mask_str,option1_str,option1_score,option2_str,option2_score,option3_str,option3_score
+"Delfiny to niezwykle interesujące ssaki morskie, które od wieków fascynują ludzi swoją inteligencją, gracją i zdolnościami komunikacyjnymi",6,które,które,0.9969,jakie,0.0012,którzy,0.0006
+"Należą do rodziny waleni, co oznacza, że są bliskimi krewnymi wielorybów i morświnów",0,Należą,Należą,0.7556,należą,0.191,Należy,0.0444
+"Zamieszkują wody oceaniczne i morskie na całym świecie, a niektóre gatunki można spotkać także w dużych rzekach, takich jak Amazonka czy Ganges",18,jak,jak,0.9996,ja,0.0001,jako,0.0
+"Cechą charakterystyczną delfinów jest ich smukłe, hydrodynamiczne ciało, które pozwala im osiągać duże prędkości i wykonywać efektowne skoki nad powierzchnią wody",5,"smukłe,",silne,0.1252,duże,0.0957,bardzo,0.0648
+"Oddychają powietrzem atmosferycznym, dlatego co kilka minut muszą wynurzać się na powierzchnię, korzystając z otworu nosowego zwanego nozdrzem",14,otworu,przewodu,0.5208,kanału,0.1751,ucha,0.0405
+"Delfiny żyją w stadach, które mogą liczyć od kilku do kilkuset osobników, a życie w grupie daje im bezpieczeństwo i ułatwia polowanie",11,"osobników,",osobników,0.7477,",",0.0656,osób,0.0394
+"Ich dieta składa się głównie z ryb i głowonogów, które łapią często dzięki wspólnej strategii i współpracy całej grupy",2,składa,składa,0.9956,składała,0.0014,opiera,0.0012
+"Niezwykle ważną rolę w życiu delfinów odgrywa echolokacja – wydają one specjalne dźwięki, które odbijają się od przeszkód i ofiar, wracając jako echo, co pozwala im nawigować w morskiej przestrzeni nawet w całkowitej ciemności",11,specjalne,dziwne,0.1286,wtedy,0.0642,charakterystyczne,0.0581
+"Delfiny posługują się szerokim repertuarem gwizdów i klików, które pełnią funkcję komunikacyjną, a badacze uważają, że każdy osobnik może posiadać coś w rodzaju „imienia dźwiękowego”",7,"klików,",dźwięków,0.806,głosów,0.0907,słów,0.0108
+"Są zwierzętami bardzo towarzyskimi i często okazują zachowania przypominające zabawę – bawią się falami, unoszą przedmioty czy surfują na prądach wodnych",6,okazują,wykazują,0.7519,prezentują,0.0775,prowadzą,0.0302
+"Wielokrotnie zaobserwowano, że delfiny potrafią pomagać sobie nawzajem, a nawet przedstawicielom innych gatunków, w tym ludziom",4,potrafią,mogą,0.4957,potrafią,0.4476,lubią,0.0157
+"Znane są historie, w których delfiny chroniły pływaków przed rekinami albo prowadziły zagubionych żeglarzy ku brzegowi",7,pływaków,ludzi,0.2088,się,0.0773,statki,0.0715
+"Rozmnażają się poprzez żyworodność – samice rodzą młode w wodzie, a inne dorosłe delfiny z grupy często pomagają przy porodzie",10,a,a,0.498,natomiast,0.2854,zaś,0.0485
+"Młode, zwane cielętami, od razu po narodzinach muszą wypłynąć na powierzchnię, by zaczerpnąć pierwszy oddech",5,po,po,0.9974,przy,0.0022,w,0.0002
+"Karmione są mlekiem matki przez wiele miesięcy, co pozwala im szybko rosnąć i wzmacniać więź rodzinną",15,rodzinną,.,0.9963,",",0.0006,!,0.0004
+"Średnia długość życia delfinów wynosi od 20 do 40 lat, ale w sprzyjających warunkach niektóre osobniki mogą dożyć nawet ponad 50 lat",5,od,od,0.9657,około,0.0275,zazwyczaj,0.0015
+"Najbardziej znanym gatunkiem jest delfin butlonosy, który często wykorzystywany jest w badaniach naukowych i występuje w delfinariach",0,Najbardziej,Najbardziej,0.6372,Innym,0.1931,Bardzo,0.0482
+"Niestety, delfiny są narażone na liczne zagrożenia ze strony człowieka, takie jak zanieczyszczenia wód, połowy rybne, sieci, a także hałas generowany przez statki i sonar wojskowy",25,wojskowy,.,0.9973,!,0.001,…,0.0009
+"W niektórych regionach świata prowadzi się specjalne programy ochronne, mające na celu zachowanie populacji delfinów i ich naturalnych siedlisk",4,prowadzi,prowadzi,0.3972,wprowadza,0.1742,stosuje,0.154
+"Obserwowanie delfinów w ich naturalnym środowisku, np",1,delfinów,zwierząt,0.5969,ptaków,0.0859,owadów,0.0817

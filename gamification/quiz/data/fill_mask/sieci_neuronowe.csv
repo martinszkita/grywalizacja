@@ -1,0 +1,21 @@
+sentence,mask_index,mask_str,option1_str,option1_score,option2_str,option2_score,option3_str,option3_score
+"Sieci neuronowe to jedna z najważniejszych gałęzi sztucznej inteligencji, inspirowana działaniem ludzkiego mózgu, w którym neurony przetwarzają i przekazują sygnały",5,najważniejszych,głównych,0.1714,najstarszych,0.166,najważniejszych,0.1544
+"Składają się z warstw sztucznych neuronów połączonych między sobą – warstwy wejściowej, jednej lub wielu warstw ukrytych oraz warstwy wyjściowej",9,–,",",0.4207,:,0.2775,–,0.0723
+"Każdy neuron otrzymuje sygnały, mnoży je przez przypisane wagi, sumuje i przepuszcza przez funkcję aktywacji, co pozwala modelowi uchwycić nieliniowe zależności",12,przez,przez,0.6479,poprzez,0.1825,wykorzystując,0.0579
+"Dzięki temu sieci neuronowe potrafią rozpoznawać wzorce w danych, które byłyby trudne do zauważenia dla tradycyjnych algorytmów",3,neuronowe,komputerowe,0.3222,internetowe,0.0732,te,0.0606
+"Uczą się na podstawie przykładów – w procesie zwanym uczeniem maszynowym, gdzie poprzez metodę propagacji wstecznej korygowane są wagi neuronów w celu zmniejszenia błędów",19,neuronów,",",0.1076,–,0.0486,uczniów,0.0448
+"Istnieją różne rodzaje sieci, m",3,"sieci,",",",0.0728,.,0.0372,takich,0.0307
+in,0,in,?,0.1582,•,0.1095,→,0.0987
+"perceptrony wielowarstwowe (MLP), sieci konwolucyjne (CNN) świetne w rozpoznawaniu obrazów, czy rekurencyjne (RNN) przeznaczone do analizy sekwencji, takich jak tekst czy mowa",19,tekst,słowa,0.1498,ruch,0.1107,gesty,0.1102
+"Sieci głębokie, składające się z wielu warstw, tworzą podstawę tzw",2,składające,tworzące,0.288,składają,0.2761,składający,0.2145
+"deep learningu, który zrewolucjonizował rozpoznawanie obrazów, tłumaczenia automatyczne czy sterowanie pojazdami autonomicznymi",10,pojazdami,pojazdami,0.7592,samochodami,0.031,programami,0.0244
+"Zastosowania sieci neuronowych są dziś niezwykle szerokie – od diagnostyki medycznej i przewidywania chorób, przez generowanie obrazów i muzyki, aż po chatboty i tłumaczenia maszynowe",12,przewidywania,leczenia,0.6252,terapii,0.2548,wykrywania,0.0265
+"Choć ich możliwości są ogromne, sieci neuronowe wymagają dużych ilości danych i mocy obliczeniowej, co stało się możliwe dopiero dzięki rozwojowi kart graficznych i specjalistycznych procesorów",4,"ogromne,",ograniczone,0.6497,niewielkie,0.1623,ogromne,0.0484
+"Jedną z ich zalet jest zdolność do generalizacji, czyli wyciągania wniosków z danych, których wcześniej nie widziały, choć przy złym doborze parametrów mogą „przeuczyć się” i działać dobrze tylko na przykładach treningowych",5,zdolność,zdolność,0.8627,skłonność,0.0643,tendencja,0.0185
+Ciekawym aspektem jest tzw,0,Ciekawym,Ważnym,0.3785,Kolejnym,0.2455,Innym,0.0885
+"czarna skrzynka – sieci potrafią dawać świetne wyniki, ale trudno zrozumieć, jak dokładnie doszły do decyzji, co rodzi pytania o przejrzystość i etykę",3,sieci,firmy,0.3738,przedsiębiorstwa,0.0608,organizacje,0.0572
+"W świecie nauki i biznesu sieci neuronowe stały się podstawowym narzędziem do pracy z Big Data, przewidywania trendów czy personalizacji usług",18,czy,i,0.6585,oraz,0.1656,",",0.0945
+"Inspirują także badaczy do tworzenia coraz bardziej zaawansowanych architektur, takich jak transformery, które obecnie dominują w przetwarzaniu języka naturalnego",10,jak,jak,0.9993,jako,0.0002,niż,0.0
+"Dzięki nim powstały modele zdolne do pisania tekstów, odpowiadania na pytania czy tworzenia kodu komputerowego",12,tworzenia,tworzenia,0.3817,pisania,0.0942,czytania,0.0831
+"Rozwój sieci neuronowych jest tak szybki, że ich obecne możliwości często wydają się przypominać science fiction, choć wciąż opierają się na matematyce, statystyce i wielu godzinach treningu na ogromnych zbiorach danych",7,ich,ich,0.8531,jego,0.0668,nasze,0.0578
+"Wraz z ich popularyzacją pojawiają się również pytania o odpowiedzialność, wpływ na rynek pracy i potencjalne ryzyka związane z ich użyciem",9,"odpowiedzialność,",ich,0.9803,jego,0.0036,jej,0.003
