@@ -1,7 +1,7 @@
 import random
 import csv
 from transformers import pipeline
-from .models import Text, Sentence, FillMaskData, GuessReplacementData
+from .models import *
 
 DATA_PATH = '/home/marcin/grywalizacja/gamification/quiz/data/'
 MAX_SENTENCES = 60
