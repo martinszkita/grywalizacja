@@ -34,3 +34,20 @@ class FillMaskQuestionForm(forms.ModelForm):
     class Meta:
         model = FillMaskAnswer
         fields= ['ans', 'note', 'quiz_id']
+
+class GuessReplacementForm(forms.ModelForm):
+    CHOICES = [('TAK', 'tak'), ('NIE', 'nie')]
+    ans = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect(attrs={'class': 'btn-check'}))
+    note = forms.CharField(max_length=200)
+    quiz_id = forms.IntegerField(disabled=True)
+    
+    def __init__(self, *args, **kwargs):
+        self.quiz_id = kwargs.pop('quiz_id', None)
+        self.sentence_obj = kwargs.pop('sentence', None)
+        
+        super().__init__(*args, **kwargs)
+        self.fields['quiz_id'].initial = self.quiz_id
+    
+    class Meta:
+        model = GuessReplacementAnswer
+        fields = ['ans', 'note']

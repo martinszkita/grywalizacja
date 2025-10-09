@@ -1,17 +1,15 @@
 from django.db import models
 
 class Text(models.Model):
+    class QuestionType(models.TextChoices):
+        FILL_MASK = "FM", "FM"
+        GUESS_REPLACEMENT =  "GR", "GR"
+        
     id = models.BigAutoField(primary_key=True)
     title = models.CharField(max_length=50)
     image = models.ImageField(upload_to='text_images/', blank=True, null=True)
+    question_type = models.CharField(max_length=100, choices=QuestionType.choices)
 
-    class QuestionType(models.TextChoices):
-        FILL_MASK = "1", "Fill Mask"
-        GUESS_REPLACEMENT = "2", "Guess Replacement"
-
-
-    question_type = models.CharField(max_length=1, choices=QuestionType.choices)
-    
     class Meta:
         unique_together = ('title', 'question_type')
     
@@ -21,23 +19,23 @@ class Text(models.Model):
 class Quiz(models.Model):
     id = models.BigAutoField(primary_key=True)
     created_at = models.DateTimeField(auto_now=True)
-    text = models.OneToOneField(Text, null=True, on_delete=models.SET_NULL)
+    texts = models.ManyToManyField(Text, related_name='quizzes')
     
     def __str__(self):
-        return f'{self.id}, {self.text.title or ''}'
+        return f'{self.id}'
     
 class Sentence(models.Model):
     id = models.BigAutoField(primary_key=True)
-    text = models.ForeignKey(Text, on_delete=models.CASCADE, related_name='sentences_text')
+    text = models.ForeignKey(Text, on_delete=models.CASCADE, related_name='sentences')
     sentence = models.TextField()
-    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, related_name="sentences_quiz", null=True)
+    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, null=True)
     
     def __str__(self):
-        return f"{self.sentence}"
-    
+        return f"{self.id}"
+
 class FillMaskData(models.Model):
     id = models.BigAutoField(primary_key=True)
-    sentence = models.OneToOneField(Sentence, on_delete=models.CASCADE, related_name="sentence_data")
+    sentence = models.OneToOneField(Sentence, on_delete=models.CASCADE, related_name="fill_mask_data")
     mask_index = models.IntegerField()
     mask_str = models.CharField(max_length=30)
     option1_str = models.CharField(max_length=30)
@@ -53,7 +51,7 @@ class FillMaskData(models.Model):
         super().save(*args, **kwargs)
     
     def __str__(self):
-        return f"{self.sentence.sentence}, {self.mask_index}"
+        return f"{self.id}"
     
 class FillMaskAnswer(models.Model):
     id = models.BigAutoField(primary_key=True)

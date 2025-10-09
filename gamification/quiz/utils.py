@@ -3,16 +3,28 @@ import csv
 from transformers import pipeline
 from .models import Text, Sentence, FillMaskData, GuessReplacementData
 
-FILL_MASK_DIR = '/home/marcin/grywalizacja/gamification/quiz/data/fill_mask/'
-GUESS_REPLACEMENT_DIR = '/home/marcin/grywalizacja/gamification/quiz/data/guess_replacement/'
-MAX_SENTENCES = 20
+DATA_PATH = '/home/marcin/grywalizacja/gamification/quiz/data/'
+MAX_SENTENCES = 60
+FILL_MASK_TOP_K = 5
+
+def text_to_csv(filename):
+    text = open(DATA_PATH+filename+'.txt', 'r').read()
+    sentences = text.split('.')
+    field_names = ['id', 'sentence']
+    
+    with open(DATA_PATH+filename+'.csv', 'w') as f:
+        writer = csv.DictWriter(f, fieldnames=field_names)
+        writer.writeheader()
+        for i, sentence in enumerate(sentences):                
+            row = {'id':i, 'sentence':sentence.strip()}
+            writer.writerow(row)
 
 def full_fill_mask_import(filename: str):
     # 1. utwórz obiekt Text jeśli nie istnieje
     text_obj, created = Text.objects.get_or_create(title=filename)
 
     # 2. wczytaj zdania z pliku
-    with open(FILL_MASK_DIR + filename + '.txt', 'r') as f:
+    with open(DATA_PATH + filename + '.txt', 'r') as f:
         raw_sentences = f.read().split('.')
 
     sentences = [s.strip() for s in raw_sentences if s.strip()][:MAX_SENTENCES]
@@ -21,7 +33,7 @@ def full_fill_mask_import(filename: str):
     fill_mask = pipeline("fill-mask", model="allegro/herbert-base-cased")
 
     # 4. przygotuj CSV
-    csv_path = FILL_MASK_DIR + filename + '.csv'
+    csv_path = DATA_PATH + filename + '.csv'
     with open(csv_path, 'w', newline='') as csvfile:
         fieldnames = [
             'sentence', 'mask_index', 'mask_str',
@@ -45,7 +57,7 @@ def full_fill_mask_import(filename: str):
             masked_sentence = " ".join(words)
 
             # predykcje
-            results = fill_mask(masked_sentence, top_k=3)
+            results = fill_mask(masked_sentence, top_k=FILL_MASK_TOP_K)
 
             # zapis do bazy
             sentence_obj = Sentence.objects.create(
