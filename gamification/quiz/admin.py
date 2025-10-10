@@ -32,12 +32,20 @@ class QuestionDataAdmin(admin.ModelAdmin):
         return question_data_object.sentence.sentence.split()[index]
 
     formatted_options.short_description = "Opcje (token : score)"
-        
     
+class QuestionAdmin(admin.ModelAdmin):
+    list_display = ['id','text' ,'question_type', 'sentence',]
     
+    def sentence(self, question_object):
+        return question_object.question_data.sentence.sentence
+    
+    def text(self, question_object):
+        return question_object.question_data.sentence.text.title
+    
+
 admin.site.register(Text)
 admin.site.register(Sentence)
-admin.site.register(Question)
+admin.site.register(Question,QuestionAdmin)
 admin.site.register(QuestionData, QuestionDataAdmin)
 admin.site.register(QuizData)
 admin.site.register(Quiz)
