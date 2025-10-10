@@ -12,21 +12,20 @@ class Text(models.Model):
 class Sentence(models.Model):
     id = models.BigAutoField(primary_key=True)
     sentence = models.TextField()
-    text = models.ForeignKey(Text, on_delete=models.CASCADE)
+    text = models.ForeignKey(Text, on_delete=models.CASCADE, related_name='sentences')
     
     def __str__(self):
-        return self.sentence
+        return f'{self.id} {self.sentence}'
 
 class QuestionData(models.Model):
     id = models.BigAutoField(primary_key=True)
     sentence = models.OneToOneField(Sentence, on_delete=models.CASCADE)
     options = models.JSONField()
-    quiz_data = models.ForeignKey('QuizData', on_delete=models.CASCADE)
+    quiz_data = models.ForeignKey('QuizData', on_delete=models.CASCADE, related_name='data')
     
     def __str__(self):
         return self.options
 
-    
 class Question(models.Model):
     class QuestionType(models.IntegerChoices):
             FM = 1, "FILL_MASK"
@@ -51,13 +50,15 @@ class QuestionAnswer(models.Model):
 
 class Quiz(models.Model):
     id = models.BigAutoField(primary_key=True)
-    
+    text = models.ForeignKey(Text, on_delete=models.SET_NULL, null=True, blank=True)
+
     def __str__(self):
         return f'{self.id}'
     
 
 class QuizData(models.Model):
     id = models.BigAutoField(primary_key=True)
+    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, related_name='data', blank=True, null=True)
     
     def __str__(self):
         return f'{self.id}'

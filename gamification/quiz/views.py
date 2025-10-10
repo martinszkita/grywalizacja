@@ -12,9 +12,8 @@ def quiz_info(request):
 
 def topic_choice(request):
     texts = Text.objects.all()
-    if not texts:
-        print("###################################DUPADUPA")
-    chosen_topic = request.GET.get('topic')
+
+    chosen_topic  = request.GET.get('topic')
     
     if chosen_topic:
         text = Text.objects.get(title=chosen_topic)
@@ -26,7 +25,7 @@ def topic_choice(request):
 
 
 def start_quiz(request):
-    return HttpResponse('dupadupa')
+    return HttpResponse(request)
     
 
 
