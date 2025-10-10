@@ -15,7 +15,7 @@ class Sentence(models.Model):
     text = models.ForeignKey(Text, on_delete=models.CASCADE, related_name='sentences')
     
     def __str__(self):
-        return f'{self.id} {self.sentence}'
+        return f'{self.sentence}'
 
 class QuestionData(models.Model):
     id = models.BigAutoField(primary_key=True)
@@ -23,8 +23,11 @@ class QuestionData(models.Model):
     options = models.JSONField()
     quiz_data = models.ForeignKey('QuizData', on_delete=models.CASCADE, related_name='data')
     
+    def masked_sentence(self):
+        s = self.sentence.sentence.split()
+    
     def __str__(self):
-        return self.options
+        return f'{self.id} {self.sentence.sentence}'
 
 class Question(models.Model):
     class QuestionType(models.IntegerChoices):

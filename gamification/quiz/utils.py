@@ -35,7 +35,7 @@ def create_fill_mask_data():
             masked_sentence = " ".join(words)
 
             results = fill_mask(masked_sentence, top_k=FILL_MASK_TOP_K)
-            options = [{"token": r["token_str"], "score": round(r["score"], 4)} for r in results]
+            options = [{'mask_index':mask_index}]+[{"token": r["token_str"], "score": round(r["score"], 4)} for r in results]
 
             quiz, _ = Quiz.objects.get_or_create(text=text)
             quiz_data, _ = QuizData.objects.get_or_create(quiz=quiz)
