@@ -42,7 +42,6 @@ class QuestionAdmin(admin.ModelAdmin):
     def text(self, question_object):
         return question_object.question_data.sentence.text.title
     
-
 admin.site.register(Text)
 admin.site.register(Sentence)
 admin.site.register(Question,QuestionAdmin)
