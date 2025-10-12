@@ -42,10 +42,43 @@ class QuestionAdmin(admin.ModelAdmin):
     def text(self, question_object):
         return question_object.question_data.sentence.text.title
     
+class QuizDataAdmin(admin.ModelAdmin):
+    list_display = ['text_title', 'question_number']
+    readonly_fields = ['text_title', ]
+    exclude = ['quiz', ]
+    
+    def text_title(self, quiz_data_object):
+        return quiz_data_object.quiz.text.title
+    
+    def question_number(self, quiz_data_object):
+        return QuestionData.objects.filter(quiz_data=quiz_data_object).count()
+
+class QuizAnswerAdmin(admin.ModelAdmin):
+    list_display = ['id', 'date', 'user_name', 'text_title']
+    readonly_fields = ['id', 'date', 'user_name', 'text_title', 'user_feedback', 'user_comment']
+    exclude = ['quiz', ]
+    
+    def text_title(self, quiz_answer_obj):
+        return quiz_answer_obj.quiz.text.title
+
+class QuestionAnswerAdmin(admin.ModelAdmin):
+    list_display = ['id','date', 'text_title', 'user_name']   
+    
+    def text_title(self, question_answer_obj):
+        return question_answer_obj.quiz_answer.quiz.text.title
+    
+    def user_name(self, question_answer_obj):
+        return question_answer_obj.quiz_answer.user_name
+    
+    def date(self, question_answer_obj):
+        return question_answer_obj.quiz_answer.date
+    
 admin.site.register(Text)
 admin.site.register(Sentence)
 admin.site.register(Question,QuestionAdmin)
 admin.site.register(QuestionData, QuestionDataAdmin)
-admin.site.register(QuizData)
+admin.site.register(QuizData, QuizDataAdmin)
 admin.site.register(Quiz)
+admin.site.register(QuizAnswer, QuizAnswerAdmin)
+admin.site.register(QuestionAnswer, QuestionAnswerAdmin)
     

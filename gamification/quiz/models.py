@@ -1,4 +1,5 @@
 from django.db import models
+from django.shortcuts import HttpResponse
 
 class Text(models.Model):
     id = models.BigAutoField(primary_key=True)
@@ -21,14 +22,19 @@ class QuestionData(models.Model):
     id = models.BigAutoField(primary_key=True)
     sentence = models.OneToOneField(Sentence, on_delete=models.CASCADE)
     options = models.JSONField()
-    quiz_data = models.ForeignKey('QuizData', on_delete=models.CASCADE, related_name='data')
-    
-    def masked_sentence(self):
-        s = self.sentence.sentence.split()
+    quiz_data = models.ForeignKey('QuizData', on_delete=models.CASCADE, related_name='datas')
     
     def __str__(self):
         return f'{self.id} {self.sentence.sentence}'
-
+    
+    def options_json_to_tuple(self):
+        options_json = self.options[1:]
+        choices = []
+        for option in options_json:
+            choices.append((option['token'], option['token']))
+   
+        return choices
+            
 class Question(models.Model):
     class QuestionType(models.IntegerChoices):
             FM = 1, "FILL_MASK"
@@ -44,7 +50,7 @@ class Question(models.Model):
 class QuestionAnswer(models.Model):
     id = models.BigAutoField(primary_key=True)
     answer = models.JSONField()
-    user_comment = models.TextField()
+    user_comment = models.TextField(null=True, blank=True)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     quiz_answer = models.ForeignKey('QuizAnswer', on_delete=models.CASCADE)
     
@@ -57,7 +63,6 @@ class Quiz(models.Model):
 
     def __str__(self):
         return f'{self.id}'
-    
 
 class QuizData(models.Model):
     id = models.BigAutoField(primary_key=True)
@@ -66,13 +71,12 @@ class QuizData(models.Model):
     def __str__(self):
         return f'{self.id}'
     
-
 class QuizAnswer(models.Model):
     id = models.BigAutoField(primary_key=True)
-    user_name = models.CharField(max_length=20)
-    user_feedback = models.SmallIntegerField()
+    user_name = models.CharField(max_length=20,null=True, blank=True)
+    user_feedback = models.SmallIntegerField(null=True, blank=True)
     user_comment = models.TextField(null=True, blank=True)
-    date = models.DateField(auto_now=True)
+    date = models.DateField(auto_now=True, blank=True)
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
     
     def __str__(self):
