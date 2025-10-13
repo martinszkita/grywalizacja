@@ -3,7 +3,7 @@ from django.utils.safestring import mark_safe
 from .models import *
 
 class QuestionDataAdmin(admin.ModelAdmin):
-    list_display = ['id', 'sentence']
+    list_display = ['id','question_type', 'sentence']
     readonly_fields = ['id','sentence', 'mask_str','formatted_options']
     exclude = ['options', 'quiz_data']
 
@@ -23,6 +23,11 @@ class QuestionDataAdmin(admin.ModelAdmin):
         return mark_safe(html)
 
     formatted_options.short_description = "Opcje"
+    
+    def question_type(self, question_data_object):
+        type_int = Question.objects.get(question_data=question_data_object).question_type
+
+        return Question.QuestionType.labels[type_int]
     
     def sentence(self, question_data_object):
         return question_data_object.sentence.sentence
@@ -72,9 +77,13 @@ class QuestionAnswerAdmin(admin.ModelAdmin):
     
     def date(self, question_answer_obj):
         return question_answer_obj.quiz_answer.date
+
+class SentenceAdmin(admin.ModelAdmin):
+    list_display = ['id','has_data', 'sentence', ]
+    readonly_fields = ['sentence','has_data', 'text', ]
     
 admin.site.register(Text)
-admin.site.register(Sentence)
+admin.site.register(Sentence, SentenceAdmin)
 admin.site.register(Question,QuestionAdmin)
 admin.site.register(QuestionData, QuestionDataAdmin)
 admin.site.register(QuizData, QuizDataAdmin)

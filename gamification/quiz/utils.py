@@ -6,6 +6,7 @@ from .models import *
 DATA_PATH = '/home/marcin/grywalizacja/gamification/quiz/data/'
 SENTENCES_PER_QUESTION_TYPE = 20
 FILL_MASK_TOP_K = 5
+WHICH_BEST_FILL_MASK_ANSWER = 3 # ktora najlespza z kolei opcja do wybrania z fill_mask()
 
 def import_sentences_from_txt(filename):
     text_obj , created = Text.objects.get_or_create(title=filename)
@@ -50,11 +51,58 @@ def create_fill_mask_data():
                 question_data.quiz_data = quiz_data
                 question_data.save()
 
-
             question = Question.objects.filter(question_data__sentence=sentence).first()
+            
             if not question:
                 question = Question(
                     question_data=question_data,
                     question_type=Question.QuestionType.FM
                 )
                 question.save()
+
+def create_guess_replacement_data():
+    fill_mask = pipeline("fill-mask", model="allegro/herbert-base-cased")
+    texts = Text.objects.all()
+    
+    for text in texts:
+        sentences_without_data = Sentence.objects.filter(text=text, has_data=False)
+        quiz = Quiz.objects.get(text=text)
+        quiz_data = QuizData.objects.get(quiz=quiz)
+        
+        for sentence in sentences_without_data:
+            print(sentence.id)
+            question_data = QuestionData()
+            question_data.quiz_data = quiz_data
+            question_data.sentence = sentence
+            
+            # przygotowanie options:JSON
+            is_replacement = random.choice([True, False])
+            options = {}
+            
+            options['is_replacement'] = is_replacement
+            
+            if is_replacement:
+                sentene_list = sentence.sentence.split()
+                s_len = len(sentene_list)
+                replacement_index = random.randint(0,s_len-1)
+                sentene_list[replacement_index] = '<mask>'
+                result = fill_mask(' '.join(sentene_list), top_k=FILL_MASK_TOP_K)[WHICH_BEST_FILL_MASK_ANSWER]
+                replacement_str = result['token_str']
+                replacement_score = result['score']
+                
+                options['replacement_index'] = replacement_index
+                options['replacement_str'] = replacement_str
+                options['replacement_score'] = replacement_score
+                options['which_best'] = WHICH_BEST_FILL_MASK_ANSWER
+               
+            question_data.options = options 
+            question_data.save()
+            
+            question = Question()
+            question.question_data = question_data
+            question.question_type = Question.QuestionType.GR
+            question.save()
+            
+            # zeby wywolalo save() i check_if_has_data()
+            sentence.save()
+    

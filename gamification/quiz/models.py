@@ -14,13 +14,23 @@ class Sentence(models.Model):
     id = models.BigAutoField(primary_key=True)
     sentence = models.TextField()
     text = models.ForeignKey(Text, on_delete=models.CASCADE, related_name='sentences')
+    has_data = models.BooleanField(default=False, null=True, blank=True)
     
     def __str__(self):
         return f'{self.sentence}'
+    
+    def check_if_has_data(self) -> bool:
+        return QuestionData.objects.filter(sentence=self).exists()
+
+
+    # aktualizacja pola has_data jesli Sentence jest juz uzyte do jakiegos pytania
+    def save(self, *args, **kwargs):
+        self.has_data = self.check_if_has_data()
+        super().save(*args, **kwargs)
 
 class QuestionData(models.Model):
     id = models.BigAutoField(primary_key=True)
-    sentence = models.OneToOneField(Sentence, on_delete=models.CASCADE)
+    sentence = models.OneToOneField(Sentence, on_delete=models.CASCADE, related_name='data')
     options = models.JSONField()
     quiz_data = models.ForeignKey('QuizData', on_delete=models.CASCADE, related_name='datas')
     
@@ -41,7 +51,7 @@ class Question(models.Model):
             GR = 2, "GUESS_REPLACEMENT"
             
     id = models.BigAutoField(primary_key=True)
-    question_data = models.OneToOneField(QuestionData, on_delete=models.CASCADE, related_name='qestions')
+    question_data = models.OneToOneField(QuestionData, on_delete=models.CASCADE, related_name='question')
     question_type = models.PositiveSmallIntegerField(choices=QuestionType.choices)
     
     def __str__(self):
