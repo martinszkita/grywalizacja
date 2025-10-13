@@ -41,7 +41,7 @@ class Question(models.Model):
             GR = 2, "GUESS_REPLACEMENT"
             
     id = models.BigAutoField(primary_key=True)
-    question_data = models.OneToOneField(QuestionData, on_delete=models.CASCADE)
+    question_data = models.OneToOneField(QuestionData, on_delete=models.CASCADE, related_name='qestions')
     question_type = models.PositiveSmallIntegerField(choices=QuestionType.choices)
     
     def __str__(self):

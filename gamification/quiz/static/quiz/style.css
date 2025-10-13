@@ -116,6 +116,38 @@ textarea:focus {
   outline: none;
 }
 
+/* Profesjonalny i nowoczesny styl dla quizu */
+.quiz-sentence {
+  font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 2.2rem;          /* Duży, ale nie przesadzony */
+  font-weight: 600;
+  color: #212529;
+  line-height: 1.4;
+  letter-spacing: 0.5px;
+}
+
+/* Wyróżnij numer pytania lekko biznesowym tonem */
+h2.text-primary {
+  font-family: "Poppins", "Segoe UI", sans-serif;
+  font-size: 1.8rem;
+  letter-spacing: 0.3px;
+}
+
+/* Drobne poprawki dla tekstu instrukcji */
+p.text-muted {
+  color: #6c757d !important;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.5;
+}
+
+/* Kafelki z lekkim efektem hover */
+.btn-outline-primary:hover {
+  transform: translateY(-2px);
+  transition: all 0.2s ease;
+}
+
+
 
 
 
