@@ -7,4 +7,5 @@ urlpatterns = [
     path('topic_choice', views.topic_choice, name='topic_choice'),  
     path('start_quiz', views.start_quiz, name='start_quiz'),
     path('fill_mask_question/<int:question_num>', views.fill_mask_question, name='fill_mask_question'),
+    path('guess_replacement_question/<int:question_num>', views.guess_replacement_question, name='guess_replacement_question'),
 ]

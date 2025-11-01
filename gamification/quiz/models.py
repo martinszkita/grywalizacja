@@ -35,7 +35,7 @@ class QuestionData(models.Model):
     quiz_data = models.ForeignKey('QuizData', on_delete=models.CASCADE, related_name='datas')
     
     def __str__(self):
-        return f'{self.id} {self.sentence.sentence}'
+        return f'{self.id} {self.sentence.sentence} {self.options}'
     
     def options_json_to_tuple(self):
         options_json = self.options[1:]
@@ -44,6 +44,11 @@ class QuestionData(models.Model):
             choices.append((option['token'], option['token']))
    
         return choices
+    
+    @property
+    def question_type(self):
+        question_type_num = self.question.question_type # type: ignore
+        return Question.QuestionType(question_type_num).label
             
 class Question(models.Model):
     class QuestionType(models.IntegerChoices):
@@ -51,7 +56,7 @@ class Question(models.Model):
             GR = 2, "GUESS_REPLACEMENT"
             
     id = models.BigAutoField(primary_key=True)
-    question_data = models.OneToOneField(QuestionData, on_delete=models.CASCADE, related_name='question')
+    question_data = models.OneToOneField(QuestionData, on_delete=models.CASCADE, related_name='data')
     question_type = models.PositiveSmallIntegerField(choices=QuestionType.choices)
     
     def __str__(self):
@@ -59,13 +64,14 @@ class Question(models.Model):
     
 class QuestionAnswer(models.Model):
     id = models.BigAutoField(primary_key=True)
-    answer = models.JSONField()
+    answer = models.JSONField(default=dict)
     user_comment = models.TextField(null=True, blank=True)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     quiz_answer = models.ForeignKey('QuizAnswer', on_delete=models.CASCADE)
     
     def __str__(self):
-        return self.answer
+        return str(self.answer)
+    
 
 class Quiz(models.Model):
     id = models.BigAutoField(primary_key=True)
