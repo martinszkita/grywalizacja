@@ -67,7 +67,7 @@ class QuestionAnswer(models.Model):
     answer = models.JSONField(default=dict)
     user_comment = models.TextField(null=True, blank=True)
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
-    quiz_answer = models.ForeignKey('QuizAnswer', on_delete=models.CASCADE)
+    quiz_answer = models.ForeignKey('QuizAnswer', on_delete=models.CASCADE, related_name='answers')
     
     def __str__(self):
         return str(self.answer)
@@ -75,7 +75,7 @@ class QuestionAnswer(models.Model):
 
 class Quiz(models.Model):
     id = models.BigAutoField(primary_key=True)
-    text = models.ForeignKey(Text, on_delete=models.SET_NULL, null=True, blank=True)
+    text = models.ForeignKey(Text, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
         return f'{self.id}'
@@ -89,11 +89,15 @@ class QuizData(models.Model):
     
 class QuizAnswer(models.Model):
     id = models.BigAutoField(primary_key=True)
-    user_name = models.CharField(max_length=20,null=True, blank=True)
+    username = models.CharField(max_length=20,null=True, blank=True)
     user_feedback = models.SmallIntegerField(null=True, blank=True)
     user_comment = models.TextField(null=True, blank=True)
     date = models.DateField(auto_now=True, blank=True)
-    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
+    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, related_name='answers')
     
     def __str__(self):
-        return f'{self.id}, {self.date}'
+        return f'{self.id}, {self.date}, {self.username}'
+    
+    @property
+    def answered_questions_num(self):
+        return self.answers.all().count() # type

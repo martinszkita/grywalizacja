@@ -2,24 +2,30 @@ import random
 import csv
 from transformers import pipeline
 from .models import *
+# import morfeusz2
 
 DATA_PATH = '/home/marcin/grywalizacja/gamification/quiz/data/'
 SENTENCES_PER_QUESTION_TYPE = 20
 FILL_MASK_TOP_K = 5
 WHICH_BEST_FILL_MASK_ANSWER = 3 # ktora najlespza z kolei opcja do wybrania z fill_mask()
 
-def import_sentences_from_txt(filename):
+def import_sentences_from_txt(filename): # podac tylko np. 'maroko' albo 'delfiny'
     text_obj , created = Text.objects.get_or_create(title=filename)
     if created:
         text_obj.save()
     
     text = open(DATA_PATH+filename+'.txt', 'r').read()
     sentences = text.split('.')
+    saved = 0
 
     for i, sentence in enumerate(sentences):                
         sentence_obj = Sentence(text=text_obj, sentence=sentence)
-        sentence_obj.save()
-        print(f'zapisano sentence:{i, sentence_obj.sentence}')
+        if sentence_obj.sentence:
+            sentence_obj.save()
+            saved +=1
+
+    print(f'zaimportowano {saved} sentences z pliku {filename}')
+        
 
 def create_fill_mask_data():
     fill_mask = pipeline("fill-mask", model="allegro/herbert-base-cased")
@@ -58,7 +64,8 @@ def create_fill_mask_data():
                     question_data=question_data,
                     question_type=Question.QuestionType.FM
                 )
-                question.save()
+            question.save()
+            print(f'Zapisano question: {question.id}')
 
 def create_guess_replacement_data():
     fill_mask = pipeline("fill-mask", model="allegro/herbert-base-cased")
@@ -66,11 +73,10 @@ def create_guess_replacement_data():
     
     for text in texts:
         sentences_without_data = Sentence.objects.filter(text=text, has_data=False)
-        quiz = Quiz.objects.get(text=text)
-        quiz_data = QuizData.objects.get(quiz=quiz)
+        quiz, _ = Quiz.objects.get_or_create(text=text)
+        quiz_data, _ = QuizData.objects.get_or_create(quiz=quiz)
         
         for sentence in sentences_without_data:
-            print(sentence.id)
             question_data = QuestionData()
             question_data.quiz_data = quiz_data
             question_data.sentence = sentence
@@ -98,11 +104,13 @@ def create_guess_replacement_data():
             question_data.options = options 
             question_data.save()
             
+            print(f' sentence_id: {sentence.id} dotaje question_data_id:{question_data.id}')
+            
             question = Question()
             question.question_data = question_data
             question.question_type = Question.QuestionType.GR
             question.save()
             
-            # zeby wywolalo save() i check_if_has_data()
             sentence.save()
-    
+            print(f'po sentence.save() has_data: {sentence.has_data}')
+

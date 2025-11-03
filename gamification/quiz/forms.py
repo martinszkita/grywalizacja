@@ -46,27 +46,60 @@ class GuessReplacementForm(ModelForm):
         required=False,
     )
 
-    chosen_word = forms.ChoiceField(
-        required=False, widget=forms.HiddenInput
-    ) 
+    chosen_word = forms.ChoiceField(required=False, widget=forms.HiddenInput)
 
     def __init__(self, *args, **kwargs):
         self.question = kwargs.pop("question", None)
-        choices = kwargs.pop('choices', None)
-        
+        choices = kwargs.pop("choices", None)
+
         super().__init__(*args, **kwargs)
-        
+
         if choices:
-            self.fields['chosen_word'].choices = choices
-            
+            self.fields["chosen_word"].choices = choices
+
     def cleaned_answer(self):
-        is_replaced_answer = self.cleaned_data['answer']
-        return {'is_replaced_answer':is_replaced_answer}
-        
+        is_replaced_answer = self.cleaned_data["answer"]
+        return {"is_replaced_answer": is_replaced_answer}
+
     def cleaned_chosen_word(self):
-        chosen_word_answer = self.cleaned_data['chosen_word']
-        return {'chosen_word_answer':chosen_word_answer}
-    
+        chosen_word_answer = self.cleaned_data["chosen_word"]
+        return {"chosen_word_answer": chosen_word_answer}
+
     class Meta:
         model = QuestionAnswer
         fields = ["answer", "user_comment", "chosen_word"]
+
+
+class UsernameForm(forms.Form):
+    username = forms.CharField(
+        label="Jak chcesz zostać zapisany/zapisana w bazie?",
+        max_length=20,
+        widget=forms.TextInput(
+            attrs={"placeholder": "Pszczółka Maja 16", "class": "form-control"}
+        ),
+        required=True,
+    )
+
+
+class UserFeedbackForm(forms.Form):
+    user_feedback = forms.IntegerField(
+        label="Jak oceniasz quiz?",
+        min_value=0,
+        max_value=10,
+        required=False,
+        widget=forms.NumberInput(
+            attrs={
+                "type": "range",
+                "min": "0",
+                "max": "10",
+                "step": "1",
+                "oninput": 'document.getElementById("val").innerText = this.value',
+            }
+        ),
+    )
+
+    user_comment = forms.CharField(
+        widget=forms.TextInput(attrs={"placeholder": "Uwielbiam robić takie quizy.."}),
+        required=False,
+        label='Co sądzisz o wypełnionym quizie?'
+    )

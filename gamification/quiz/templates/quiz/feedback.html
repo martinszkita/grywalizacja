@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %} Feedback {% endblock title %}
+{% block content %}
+  <h1 class="text-center mb-4">Feedback</h1>
+
+  <div class="slider-container">
+    <div id="rating-slider">
+      <form method="post">
+        {% csrf_token %}
+        <label> {{ summary_form.user_feedback.label }} </label>
+        {{ summary_form.user_feedback }}
+        <button type="submit" class="btn btn-success btn-lg px-5 shadow">Zapisz</button>
+      </form>
+    </div>
+  </div>
+{% endblock %}

@@ -52,7 +52,7 @@ class Migration(migrations.Migration):
             name='QuizAnswer',
             fields=[
                 ('id', models.BigAutoField(primary_key=True, serialize=False)),
-                ('user_name', models.CharField(max_length=20)),
+                ('username', models.CharField(max_length=20)),
                 ('user_feedback', models.SmallIntegerField()),
                 ('user_comment', models.TextField(blank=True, null=True)),
                 ('date', models.DateField(auto_now=True)),
