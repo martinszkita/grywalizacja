@@ -108,22 +108,15 @@ def guess_replacement_question(request, question_num):
             quiz_answer = QuizAnswer.objects.get(id=request.session["quiz_answer_id"])
             question_answer.quiz_answer = quiz_answer
 
-            # zamien str (TAK/NIE) na JSON do zapisu
+            # sprawdzenie czy wybrano slowo jesli zaznaczono TAK
+            if (form.cleaned_data["chosen_word"] == '' and question_answer.answer== "tak"):
+                return render(request, "quiz/guess_replacement_question.html", context)
+
+            
             if isinstance(question_answer.answer, str):
                 question_answer.answer = {
                     "is_replacement_answer": question_answer.answer
                 }
-
-            # sprawdzenie czy wybrano slowo jesli zaznaczono TAK
-            if (
-                not form.cleaned_data["chosen_word"]
-                and form.cleaned_data["answer"] == "tak"
-            ):
-                messages.error(request, "Proszę wybrać zamienione słowo!")
-                context["form"] = form
-
-                return render(request, "quiz/guess_replacement_question.html", context)
-
             question_answer.answer["chosen_word"] = form.cleaned_data["chosen_word"]
             question_answer.save()
 
@@ -147,24 +140,25 @@ def start_quiz(request):
 
 def quiz_end(request):
     username_form = UsernameForm(request.POST or None)
-    
-    if request.method == 'POST':
+
+    if request.method == "POST":
         if username_form.is_valid():
-            username = username_form.cleaned_data['username']
+            username = username_form.cleaned_data["username"]
             if not username:
                 messages.error(request, "Proszę wpisać swój nick!")
-                return redirect('quiz_end')
-            quiz_answer_id = request.session['quiz_answer_id']
+                return redirect("quiz_end")
+            quiz_answer_id = request.session["quiz_answer_id"]
             quiz_answer = QuizAnswer.objects.get(id=quiz_answer_id)
             quiz_answer.username = username
             quiz_answer.save()
-            request.session['username'] = username
-            return redirect('feedback')
-        messages.error(request, 'Niepoprawna nazwa użytkownika!')   
-        return redirect('quiz_end')
-    
-    context = {'username_form':username_form}
-    return render(request, 'quiz/quiz_end.html', context)
+            request.session["username"] = username
+            return redirect("feedback")
+        messages.error(request, "Niepoprawna nazwa użytkownika!")
+        return redirect("quiz_end")
+
+    context = {"username_form": username_form}
+    return render(request, "quiz/quiz_end.html", context)
+
 
 def feedback(request):
     if request.session["quiz_answer_id"]:
@@ -179,20 +173,19 @@ def feedback(request):
         if user_feedback_form.is_valid():
             user_feedback = user_feedback_form.cleaned_data["user_feedback"]
             user_comment = user_feedback_form.cleaned_data["user_comment"]
-            
+
             if user_comment:
                 quiz_answer.user_comment = user_comment
-            
+
             if user_feedback:
                 quiz_answer.user_feedback = user_feedback
-            
+
             quiz_answer.save()
             return redirect("quiz")
 
         messages.error(request, user_feedback_form.errors.as_text())
-        return redirect('feedback')
+        return redirect("feedback")
 
-    context = {'user_feedback_form':user_feedback_form}
+    context = {"user_feedback_form": user_feedback_form}
 
     return render(request, "quiz/feedback.html", context)
-

@@ -46,7 +46,7 @@ class GuessReplacementForm(ModelForm):
         required=False,
     )
 
-    chosen_word = forms.ChoiceField(required=False, widget=forms.HiddenInput)
+    chosen_word = forms.CharField(required=False, widget=forms.HiddenInput())
 
     def __init__(self, *args, **kwargs):
         self.question = kwargs.pop("question", None)
@@ -56,14 +56,6 @@ class GuessReplacementForm(ModelForm):
 
         if choices:
             self.fields["chosen_word"].choices = choices
-
-    def cleaned_answer(self):
-        is_replaced_answer = self.cleaned_data["answer"]
-        return {"is_replaced_answer": is_replaced_answer}
-
-    def cleaned_chosen_word(self):
-        chosen_word_answer = self.cleaned_data["chosen_word"]
-        return {"chosen_word_answer": chosen_word_answer}
 
     class Meta:
         model = QuestionAnswer

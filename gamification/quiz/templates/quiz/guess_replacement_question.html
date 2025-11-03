@@ -39,7 +39,7 @@
     </script>
 
 
-    <input type="hidden" name="selected_word" id="selectedWordInput" value="" />
+    <input type="hidden" name="chosen_word" id="chosen_word" value="" />
 
     <!-- "Dodaj notatkę" -->
     <div class="d-flex justify-content-center mt-4">
@@ -85,7 +85,7 @@
       })
     
       // 💬 Po kliknięciu kafelka zapisz jego tekst do ukrytego pola
-      const hiddenInput = document.getElementById('selectedWordInput')
+      const hiddenInput = document.getElementById('chosen_word')
     
       document.querySelectorAll('.word-btn').forEach((btn) => {
         btn.addEventListener('click', () => {
