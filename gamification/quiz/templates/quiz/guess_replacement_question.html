@@ -75,8 +75,8 @@
           }
         })
       })
-    
-      // 💬 Dodatkowo: kliknięcie w kafelek go podświetla (jak wybór)
+      
+      //  Dodatkowo: kliknięcie w kafelek go podświetla (jak wybór)
       document.querySelectorAll('.word-btn').forEach((btn) => {
         btn.addEventListener('click', () => {
           document.querySelectorAll('.word-btn').forEach((b) => b.classList.remove('active'))
@@ -84,7 +84,7 @@
         })
       })
     
-      // 💬 Po kliknięciu kafelka zapisz jego tekst do ukrytego pola
+      //  Po kliknięciu kafelka zapisz jego tekst do ukrytego pola
       const hiddenInput = document.getElementById('chosen_word')
     
       document.querySelectorAll('.word-btn').forEach((btn) => {

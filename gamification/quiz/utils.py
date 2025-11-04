@@ -1,8 +1,7 @@
 import random
-import csv
-from transformers import pipeline
+# from transformers import pipeline
 from .models import *
-# import morfeusz2
+import morfeusz2
 
 DATA_PATH = '/home/marcin/grywalizacja/gamification/quiz/data/'
 SENTENCES_PER_QUESTION_TYPE = 20
@@ -26,7 +25,6 @@ def import_sentences_from_txt(filename): # podac tylko np. 'maroko' albo 'delfin
 
     print(f'zaimportowano {saved} sentences z pliku {filename}')
         
-
 def create_fill_mask_data():
     fill_mask = pipeline("fill-mask", model="allegro/herbert-base-cased")
     texts = Text.objects.all()
@@ -114,3 +112,32 @@ def create_guess_replacement_data():
             sentence.save()
             print(f'po sentence.save() has_data: {sentence.has_data}')
 
+def morf():
+    morf = morfeusz2.Morfeusz()
+    """"
+    rzeczownik: subst:sg:nom:m1
+    ogólnie: (0, 1, ('kot', 'kot:Sm1', 'subst:sg:nom:m1', ['nazwa_pospolita'], ['pot.,środ.']))
+    """
+    base_words = []
+    base_words_keys = ['word', 'base', 'pos', 'tag_str']
+
+    question_datas = QuestionData.objects.filter(question__question_type=Question.QuestionType.FM)
+
+    for qd in question_datas:
+        word = qd.options[0]['mask_index'] # mask index?
+        if not word:
+            print('nie ma word')
+            
+        an = morf.analyse(word)
+
+        for start, end, form in an:
+            word, base, tag, _, _ = form
+            tag_list = tag.split(':')
+            pos = tag_list[0]
+            base_words_values = [word, base, pos, tag]
+            base_words.append(dict(zip(base_words_keys, base_words_values)))
+            
+    print(base_words)
+    
+if __name__ == '__main__':
+    morf()

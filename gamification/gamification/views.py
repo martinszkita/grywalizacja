@@ -17,6 +17,4 @@ def stats(request):
                'total_users': total_users
                }
     
-    print(stats.items())
-    
     return render(request, 'gamification/stats.html', {'stats_items':stats.items()})

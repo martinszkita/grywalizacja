@@ -4,8 +4,8 @@ from .models import *
 
 class QuestionDataAdmin(admin.ModelAdmin):
     list_display = ['id','question_type', 'sentence']
-    readonly_fields = ['id','sentence', 'mask_str','formatted_options']
-    exclude = ['options', 'quiz_data']
+    readonly_fields = ['id','sentence', 'mask_str','formatted_options', 'options', 'quiz_data']
+    exclude = []
 
     def formatted_options(self, obj):
         data = obj.options or []
@@ -27,15 +27,17 @@ class QuestionDataAdmin(admin.ModelAdmin):
     def question_type(self, question_data_object):
         type_int = Question.objects.get(question_data=question_data_object).question_type
 
-        return Question.QuestionType.labels[type_int]
+        return Question.QuestionType.labels[type_int-1]
     
     def sentence(self, question_data_object):
         return question_data_object.sentence.sentence
     
     def mask_str(self, question_data_object):
-        index = question_data_object.options[0]['mask_index']
-        return question_data_object.sentence.sentence.split()[index]
-
+        if question_data_object.question_type == 'FM':
+            index = question_data_object.options[0]['mask_index']
+            return question_data_object.sentence.sentence.split()[index]
+        
+        return -1
     formatted_options.short_description = "Opcje (token : score)" #type: ignore
     
 class QuestionAdmin(admin.ModelAdmin):

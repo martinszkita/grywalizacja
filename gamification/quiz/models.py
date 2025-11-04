@@ -35,7 +35,7 @@ class QuestionData(models.Model):
     quiz_data = models.ForeignKey('QuizData', on_delete=models.CASCADE, related_name='datas')
     
     def __str__(self):
-        return f'{self.id} {self.sentence.sentence} {self.options}'
+        return f'{self.id}, {self.question_type}'
     
     def options_json_to_tuple(self):
         options_json = self.options[1:]
@@ -56,11 +56,11 @@ class Question(models.Model):
             GR = 2, "GUESS_REPLACEMENT"
             
     id = models.BigAutoField(primary_key=True)
-    question_data = models.OneToOneField(QuestionData, on_delete=models.CASCADE, related_name='data')
+    question_data = models.OneToOneField(QuestionData, on_delete=models.CASCADE, related_name='question')
     question_type = models.PositiveSmallIntegerField(choices=QuestionType.choices)
     
     def __str__(self):
-        return str(self.question_data)
+        return f'{self.id}'
     
 class QuestionAnswer(models.Model):
     id = models.BigAutoField(primary_key=True)
