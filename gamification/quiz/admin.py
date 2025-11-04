@@ -27,12 +27,15 @@ class QuestionDataAdmin(admin.ModelAdmin):
     def question_type(self, question_data_object):
         type_int = Question.objects.get(question_data=question_data_object).question_type
 
-        return Question.QuestionType.labels[type_int]
+        return Question.QuestionType.labels[type_int-1]
     
     def sentence(self, question_data_object):
         return question_data_object.sentence.sentence
     
     def mask_str(self, question_data_object):
+        if self.question_type is not 'FM':
+            return '-'
+        
         index = question_data_object.options[0]['mask_index']
         return question_data_object.sentence.sentence.split()[index]
 

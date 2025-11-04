@@ -35,7 +35,7 @@ class QuestionData(models.Model):
     quiz_data = models.ForeignKey('QuizData', on_delete=models.CASCADE, related_name='datas')
     
     def __str__(self):
-        return f'{self.id} {self.sentence.sentence} {self.options}'
+        return f'{self.id} {self.sentence.text.title}'
     
     def options_json_to_tuple(self):
         options_json = self.options[1:]
