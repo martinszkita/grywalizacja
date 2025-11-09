@@ -1,6 +1,6 @@
 # import random
 # from transformers import pipeline
-# from .models import *
+from .models import *
 import morfeusz2
 import plwordnet
 import pickle
