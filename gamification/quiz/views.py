@@ -40,7 +40,12 @@ def fill_mask_question(request, question_num):
     question_data = question_datas[question_num]
     sentence = question_data.sentence
     choices = question_data.options_json_to_tuple()
-    mask_index = dict(question_data.options[0])["mask_index"]
+    print(choices)
+    if isinstance(question_data.question_data, dict): 
+        mask_index = question_data.question_data["mask_index"]
+    else:
+        return HttpResponse(f'question data type: {type(question_data.question_data)}')
+    
     masked_sentence = sentence.sentence.split()
     masked_sentence[mask_index] = "_____"
     question = Question.objects.get(question_data=question_data)
@@ -88,7 +93,9 @@ def guess_replacement_question(request, question_num):
 
     question_data = question_datas[question_num]
     question = Question.objects.get(question_data=question_data)
-    choices = [(q, q.upper()) for q in question.question_data.sentence.sentence.split()]
+    choices = [
+        (q, q.upper()) for q in question.question_data.sentence.sentence.split()
+    ] + [question.question_data.options_json_to_tuple]
 
     form = GuessReplacementForm(
         request.POST or None, question=question, choices=choices
@@ -109,10 +116,12 @@ def guess_replacement_question(request, question_num):
             question_answer.quiz_answer = quiz_answer
 
             # sprawdzenie czy wybrano slowo jesli zaznaczono TAK
-            if (form.cleaned_data["chosen_word"] == '' and question_answer.answer== "tak"):
+            if (
+                form.cleaned_data["chosen_word"] == ""
+                and question_answer.answer == "tak"
+            ):
                 return render(request, "quiz/guess_replacement_question.html", context)
 
-            
             if isinstance(question_answer.answer, str):
                 question_answer.answer = {
                     "is_replacement_answer": question_answer.answer

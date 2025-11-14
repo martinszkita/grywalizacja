@@ -1,0 +1,16 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Run quiz importer",
+            "type": "python",
+            "request": "launch",
+            "module": "quiz.utils",          // ← zmiana!
+            "cwd": "${workspaceFolder}",
+            "env": {
+                "DJANGO_SETTINGS_MODULE": "gamification.settings"
+            },
+            "justMyCode": true
+        }
+    ]
+}

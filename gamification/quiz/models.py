@@ -31,25 +31,34 @@ class Sentence(models.Model):
 class QuestionData(models.Model):
     id = models.BigAutoField(primary_key=True)
     sentence = models.OneToOneField(Sentence, on_delete=models.CASCADE, related_name='data')
-    options = models.JSONField()
+    question_data = models.JSONField()
     quiz_data = models.ForeignKey('QuizData', on_delete=models.CASCADE, related_name='datas')
     
     def __str__(self):
         return f'{self.id} {self.sentence.text.title}'
     
     def options_json_to_tuple(self):
-        options_json = self.options[1:]
         choices = []
-        for option in options_json:
-            choices.append((option['token'], option['token']))
-   
+        for option in self.question_data['options']:
+            opt = option['token']
+            choices.append((opt, opt.upper()))
         return choices
     
     @property
     def question_type(self):
         question_type_num = self.question.question_type # type: ignore
         return Question.QuestionType(question_type_num).label
-            
+    
+    @property
+    def text(self):
+        return self.sentence.text.title
+    
+    @property
+    def question_type(self):
+        type_int = Question.objects.get(question_data=self).question_type
+
+        return Question.QuestionType.labels[type_int-1]
+        
 class Question(models.Model):
     class QuestionType(models.IntegerChoices):
             FM = 1, "FILL_MASK"
