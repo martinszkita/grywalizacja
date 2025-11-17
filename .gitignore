@@ -9,10 +9,12 @@ venv/
 # WordNet data artifacts
 wordnet.pkl
 pl_wordnet_4_2/
-pl_wordnet_4_2/
 wordnet/
 
 # Django/IDE
 *.sqlite3
 .idea/
 .vscode/
+pl_wordnet_4_2/
+wordnet/
+
