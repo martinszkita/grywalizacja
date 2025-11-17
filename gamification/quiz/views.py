@@ -148,11 +148,11 @@ def start_quiz(request):
 
 
 def quiz_end(request):
-    username_form = UsernameForm(request.POST or None)
+    form = UsernameForm(request.POST or None)
 
     if request.method == "POST":
-        if username_form.is_valid():
-            username = username_form.cleaned_data["username"]
+        if form.is_valid():
+            username = form.cleaned_data["username"]
             if not username:
                 messages.error(request, "Proszę wpisać swój nick!")
                 return redirect("quiz_end")
@@ -165,7 +165,7 @@ def quiz_end(request):
         messages.error(request, "Niepoprawna nazwa użytkownika!")
         return redirect("quiz_end")
 
-    context = {"username_form": username_form}
+    context = {"form": form}
     return render(request, "quiz/quiz_end.html", context)
 
 
@@ -176,12 +176,12 @@ def feedback(request):
         return HttpResponse("quiz_answer_id error while summary!")
 
     quiz_answer = QuizAnswer.objects.get(id=quiz_answer_id)
-    user_feedback_form = UserFeedbackForm(request.POST or None)
+    form = UserFeedbackForm(request.POST or None)
 
     if request.method == "POST":
-        if user_feedback_form.is_valid():
-            user_feedback = user_feedback_form.cleaned_data["user_feedback"]
-            user_comment = user_feedback_form.cleaned_data["user_comment"]
+        if form.is_valid():
+            user_feedback = form.cleaned_data["user_feedback"]
+            user_comment = form.cleaned_data["user_comment"]
 
             if user_comment:
                 quiz_answer.user_comment = user_comment
@@ -192,9 +192,12 @@ def feedback(request):
             quiz_answer.save()
             return redirect("quiz")
 
-        messages.error(request, user_feedback_form.errors.as_text())
+        messages.error(request, form.errors.as_text())
         return redirect("feedback")
 
-    context = {"user_feedback_form": user_feedback_form}
+    context = {"form": form}
 
     return render(request, "quiz/feedback.html", context)
+
+def quiz_stats(request):
+    pass

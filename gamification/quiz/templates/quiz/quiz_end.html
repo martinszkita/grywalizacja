@@ -1,10 +1,18 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
 {% block content %}
-
-<div class="container mt-5">
+  <div class="container mt-5">
     <h1 class="text-center mb-5">KONIEC QUIZU</h1>
-    <h2 class="fw-semibold text-primary mb-2">dziękuję za poświęcony czas!</h2>
-</div>
+    <h2 class="fw-semibold text-primary mb-2 center">dziękuję za poświęcony czas!</h2>
+    <form method="post" action="">
+      <div class="d-flex justify-content-center">
+        {% csrf_token %}
+        {{ form.as_p }}
+      </div>
 
-{% endblock content %}
+      <div class="d-flex justify-content-center mt-4">
+        <button type="submit" class="btn btn-primary btn-lg px-5">submit</button>
+      </div>
+    </form>
+  </div>
+{% endblock %}

@@ -11,7 +11,9 @@
     <li> #TODO </li>
 <ul>
 
-<a href="{% url 'topic_choice' %}" class="btn btn-primary btn-sm" role="button" aria-pressed="true">Wybierz tematykę quizu!</a>
-<a href="{% url 'guess_replacement_question' 6 %}">skip do guess_replacement_question</a>
+<a href="{% url 'topic_choice' %}" class="btn btn-primary btn-sm" role="button" aria-pressed="true"> Wybierz tematykę quizu!</a>
+<a href="{% url 'guess_replacement_question' 6 %}" class="btn btn-primary btn-sm">skip do guess_replacement_question</a>
+<a href="{% url 'quiz_end' %}" class="btn btn-primary btn-sm">skip do quiz_end</a>
+<a href="{% url 'feedback' %}" class="btn btn-primary btn-sm">skip do feedback</a>
 
 {% endblock %}

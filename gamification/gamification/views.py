@@ -4,6 +4,8 @@ from quiz.models import *
 def home(request):
     return render(request, 'gamification/home.html', {})
 
+def o_pracy(request):
+    return render(request, 'gamification/o_pracy.html')
     
 def stats(request):
     total_answers = QuestionAnswer.objects.all().count()

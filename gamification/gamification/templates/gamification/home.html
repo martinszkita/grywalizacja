@@ -1,7 +1,47 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
 
-{% block title %}Strona główna{% endblock %}
+{% block title %}
+  Strona główna
+{% endblock %}
 
 {% block content %}
-HOME
-{% endblock%}
+  <div class="container header-top">
+    <div class="card shadow-sm mb-4">
+      <div class="card-body">
+        <h1 class="card-title mb-4 text-center">Gamifikacja w procesie oceny siły relacji semantycznej w Wordnecie</h1>
+        <h4 class="text-muted text-center mb-4">Temat pracy inżynierskiej</h4>
+        <p class="lead text-center">
+          Quiz, który za chwilę wypełnisz, ma na celu zbadanie użycia
+          <strong>Słowosieci (plWordnetu)</strong> — największej na świecie bazy synsetów, czyli zestawów synonimów.
+        </p>
+      </div>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+      <div class="card-body">
+        <h4 class="mb-3">Co znajdziesz w quizie?</h4>
+
+        <ul class="list-group mb-4">
+          <li class="list-group-item">Wybór najlepiej pasującego słowa</li>
+          <li class="list-group-item">Odgadnięcie zamienionego w zdaniu słowa</li>
+          <li class="list-group-item">#TODO</li>
+        </ul>
+
+        <h4 class="mb-3">Szczegóły</h4>
+
+        <ul class="list-group mb-4">
+          <li class="list-group-item">Każda część składa się z 20 pytań</li>
+          <li class="list-group-item">Całość zajmie około 10–15 minut</li>
+          <li class="list-group-item">Nie ma tutaj złych odpowiedzi — serio 🙂</li>
+          <li class="list-group-item">Po ukończeniu ocenisz quiz i dasz ewentualny feedback</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="alert alert-success text-center shadow-sm">
+      <h4 class="mb-0">Dziękuję z góry za każdą odpowiedź i opinie! 🙌</h4>
+    </div>
+  </div>
+
+  <button type="button" class="btn btn-primary">Przejdź do quizu!</button>
+{% endblock %}
