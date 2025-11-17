@@ -95,15 +95,15 @@ def create_fill_mask_data_herbert():
 
 def create_guess_replacement_data():
     fill_mask = pipeline("fill-mask", model="allegro/herbert-base-cased")
+    saved_GR_data = 0
+    
     for text in Text.objects.all():
         sentences_without_data = Sentence.objects.filter(text=text, has_data=False)
-        if sentences_without_data.count() < SENTENCES_PER_QUESTION_TYPE:
-            raise Exception("nie ma 20 zdan bez danych dla tekstu: ", text.title)
-
+        question_count = min(sentences_without_data.count(), SENTENCES_PER_QUESTION_TYPE )
         quiz, _ = Quiz.objects.get_or_create(text=text)
         quiz_data, _ = QuizData.objects.get_or_create(quiz=quiz)
 
-        for sentence in sentences_without_data[:SENTENCES_PER_QUESTION_TYPE]:
+        for sentence in sentences_without_data[:question_count]:
             question_data_o = QuestionData()
             question_data_o.quiz_data = quiz_data
             
@@ -148,14 +148,15 @@ def create_guess_replacement_data():
                     
             question_data_o.question_data = question_data
             question_data_o.save()
-
-            print(f" sentence_id: {sentence.id} dostaje:{question_data}")
+            saved_GR_data +=1
 
             question = Question()
             question.question_data = question_data_o
             question.question_type = Question.QuestionType.GR
             question.save()
             sentence.save()
+            
+    print(f"zapisano {saved_GR_data} question_data obiektów")
 
 
 def get_synset_words(word):
