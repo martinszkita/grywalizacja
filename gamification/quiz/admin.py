@@ -7,34 +7,44 @@ from .models import *
 class QuestionDataAdmin(admin.ModelAdmin):
     class TextListFilter(admin.SimpleListFilter):
         title = "text title"
-        parameter_name = "text title parameter"
+        parameter_name = "text__title"
 
         def lookups(self, request, model_admin):
-            return [("delfiny", "DELFINY"),
-                    ("maroko", "MAROKO"),
-                    ("sieci_neuronowe", 'SIECI_NEURONOWE')]
-        
+            text_titles = [(text.title, text.title) for text in Text.objects.all()]
+            return text_titles
+
         def queryset(self, request, queryset):
             value = self.value()
-            if value == "delfiny":
-                return queryset.filter(sentence__text__title="delfiny")
-            if value == "maroko":
-                return queryset.filter(sentence__text__title="maroko")
-            if value == "sieci_neuronowe":
-                return queryset.filter(sentence__text__title="sieci_neuronowe")
 
-            return queryset
-        
+            if value:
+                return queryset.filter(sentence__text__title=value)
+            return queryset.all()
+
+    class QuestionTypeFilter(admin.SimpleListFilter):
+        title = "question type"
+        parameter_name = "question_type"
+
+        def lookups(self, request, model_admin):
+            return [(qt.label, qt.label) for qt in Question.QuestionType]
+
+        def queryset(self, request, queryset):
+            value = self.value()
+
+            if value is None:
+                return queryset.all()
+
+            value_int = Question.QuestionType.from_label(value)
+
+            return queryset.filter(data__question_type=value_int)
+
     list_display = [
         "id",
         "text",
         "question_type",
         "sentence",
     ]
-    list_filter = [
-        TextListFilter,
-    ]
-    readonly_fields = ["id", "sentence", "mask_str", "options"]
+    list_filter = [TextListFilter, QuestionTypeFilter]
+    readonly_fields = ["id", "sentence", "mask_str", "question_data"]
     exclude = [
         "quiz_data",
     ]
@@ -48,9 +58,6 @@ class QuestionDataAdmin(admin.ModelAdmin):
 
         index = question_data_object.options[0]["mask_index"]
         return question_data_object.sentence.sentence.split()[index]
-
-    def options(self, question_data_object):
-        return question_data_object.question_data["options"]
 
 
 @admin.register(Question)
@@ -140,6 +147,7 @@ class SentenceAdmin(admin.ModelAdmin):
         "sentence",
         "has_data",
         "text",
+        "data",
     ]
     list_filter = ["has_data", "text"]
 
