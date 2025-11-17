@@ -135,14 +135,14 @@ def create_guess_replacement_data():
                     choice["replacement_score"] = result["score"]
                     choice["which_best"] = WHICH_BEST_FILL_MASK_ANSWER
                     choice["source"] = "herbert"
-                    question_data["choices"].extend(choice)
+                    question_data["choices"].append(choice)
 
                 # dodanie synonimów z wordnetu
                 replacement_str = sentence_list[replacement_index]
                 synonyms = get_synonyms(replacement_str)
 
                 for synonym in synonyms:
-                    question_data["choices"].extend(
+                    question_data["choices"].append(
                         {"replacement_str": synonym, "source": "wordnet"}
                     )
                     
