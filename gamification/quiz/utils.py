@@ -1,9 +1,7 @@
 import os
 import django
 
-os.environ.setdefault(
-    "DJANGO_SETTINGS_MODULE", "gamification.settings"
-) 
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "gamification.settings")
 django.setup()
 
 import random
@@ -97,54 +95,67 @@ def create_fill_mask_data_herbert():
 
 def create_guess_replacement_data():
     fill_mask = pipeline("fill-mask", model="allegro/herbert-base-cased")
-    texts = Text.objects.all()
-
-    for text in texts:
+    for text in Text.objects.all():
         sentences_without_data = Sentence.objects.filter(text=text, has_data=False)
+        if sentences_without_data.count() < SENTENCES_PER_QUESTION_TYPE:
+            raise Exception("nie ma 20 zdan bez danych dla tekstu: ", text.title)
+
         quiz, _ = Quiz.objects.get_or_create(text=text)
         quiz_data, _ = QuizData.objects.get_or_create(quiz=quiz)
 
-        for sentence in sentences_without_data:
-            question_data = QuestionData()
-            question_data.quiz_data = quiz_data
-            question_data.sentence = sentence
+        for sentence in sentences_without_data[:SENTENCES_PER_QUESTION_TYPE]:
+            question_data_o = QuestionData()
+            question_data_o.quiz_data = quiz_data
+            
+            if QuestionData.objects.filter(sentence=sentence).exists():
+                raise Exception(f"sentence z id: {sentence.id} juz w uzyciu!")
+            
+            question_data_o.sentence = sentence
 
             # przygotowanie options:JSON
             is_replacement = random.choice([True, False])
-            options = {}
+            question_data = dict()
 
-            options["is_replacement"] = is_replacement
+            question_data["is_replacement"] = is_replacement
 
             if is_replacement:
-                sentene_list = sentence.sentence.split()
-                s_len = len(sentene_list)
+                sentence_list = sentence.sentence.split()
+                s_len = len(sentence_list)
                 replacement_index = random.randint(0, s_len - 1)
-                sentene_list[replacement_index] = "<mask>"
-                result = fill_mask(" ".join(sentene_list), top_k=FILL_MASK_TOP_K)[
-                    WHICH_BEST_FILL_MASK_ANSWER
-                ]
-                replacement_str = result["token_str"]
-                replacement_score = result["score"]
+                sentence_list[replacement_index] = "<mask>"
+                results = fill_mask(" ".join(sentence_list), top_k=FILL_MASK_TOP_K)
 
-                options["replacement_index"] = replacement_index
-                options["replacement_str"] = replacement_str
-                options["replacement_score"] = replacement_score
-                options["which_best"] = WHICH_BEST_FILL_MASK_ANSWER
+                question_data["replacement_index"] = replacement_index
+                question_data["choices"] = []
 
-            question_data.options = options
-            question_data.save()
+                # dodanie danych z herberta
+                for result in results:
+                    choice = {}
+                    choice["replacement_str"] = result["token_str"]
+                    choice["replacement_score"] = result["score"]
+                    choice["which_best"] = WHICH_BEST_FILL_MASK_ANSWER
+                    choice["source"] = "herbert"
+                    question_data["choices"].extend(choice)
 
-            print(
-                f" sentence_id: {sentence.id} dotaje question_data_id:{question_data.id}"
-            )
+                # dodanie synonimów z wordnetu
+                replacement_str = sentence_list[replacement_index]
+                synonyms = get_synonyms(replacement_str)
+
+                for synonym in synonyms:
+                    question_data["choices"].extend(
+                        {"replacement_str": synonym, "source": "wordnet"}
+                    )
+                    
+            question_data_o.question_data = question_data
+            question_data_o.save()
+
+            print(f" sentence_id: {sentence.id} dostaje:{question_data}")
 
             question = Question()
-            question.question_data = question_data
+            question.question_data = question_data_o
             question.question_type = Question.QuestionType.GR
             question.save()
-
             sentence.save()
-            print(f"po sentence.save() has_data: {sentence.has_data}")
 
 
 def get_synset_words(word):
@@ -195,30 +206,31 @@ def get_synonyms(word="grała"):
 
     return new_forms
 
+
 # zaklada ze sa juz dane z herberta!!!
 def refill_fill_mask_data_wordnet():
     questions_saved = 0
     synonyms_saved = 0
     for qd in QuestionData.objects.all():
-        mask_index = qd.question_data['mask_index']
+        mask_index = qd.question_data["mask_index"]
         if mask_index is None:
             print("refill, mask index error!")
             return
         word = qd.sentence.sentence.split()[mask_index]
-        print(f'dodaje synonimy dla slowa: {word}')
+        print(f"dodaje synonimy dla slowa: {word}")
         data = []
         saved = 0
         for s in get_synonyms(word):
             print(s)
             synonyms_saved += 1
-            data.append({'token':s,
-                         'source':'wordnet'})
-        qd.question_data['options'].extend(data)
+            data.append({"token": s, "source": "wordnet"})
+        qd.question_data["options"].extend(data)
         qd.save()
-        questions_saved +=1
-        
-    print(f'zapisano {synonyms_saved} synonimy w {questions_saved} pytaniach!')
-        
+        questions_saved += 1
+
+    print(f"zapisano {synonyms_saved} synonimy w {questions_saved} pytaniach!")
+
 
 if __name__ == "__main__":
-    refill_fill_mask_data_wordnet()
+    # refill_fill_mask_data_wordnet()
+    create_guess_replacement_data()

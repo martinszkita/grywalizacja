@@ -22,7 +22,6 @@ class Sentence(models.Model):
     def check_if_has_data(self) -> bool:
         return QuestionData.objects.filter(sentence=self).exists()
 
-
     # aktualizacja pola has_data jesli Sentence jest juz uzyte do jakiegos pytania
     def save(self, *args, **kwargs):
         self.has_data = self.check_if_has_data()
@@ -46,28 +45,27 @@ class QuestionData(models.Model):
     
     @property
     def question_type(self):
-        question_type_num = self.question.question_type # type: ignore
+        question_type_num = self.data.question_type # type: ignore
         return Question.QuestionType(question_type_num).label
     
     @property
     def text(self):
         return self.sentence.text.title
     
-    @property
-    def question_type(self):
-        type_int = Question.objects.get(question_data=self).question_type
-
-        return Question.QuestionType.labels[type_int-1]
         
 class Question(models.Model):
     class QuestionType(models.IntegerChoices):
-            FM = 1, "FILL_MASK"
-            GR = 2, "GUESS_REPLACEMENT"
+        FM = 1, "FILL_MASK"
+        GR = 2, "GUESS_REPLACEMENT"
+        
+        @classmethod
+        def from_label(cls, label):
+            return next((c for c in cls if c.label == label), None)
             
     id = models.BigAutoField(primary_key=True)
     question_data = models.OneToOneField(QuestionData, on_delete=models.CASCADE, related_name='data')
     question_type = models.PositiveSmallIntegerField(choices=QuestionType.choices)
-    
+
     def __str__(self):
         return str(self.question_data)
     
