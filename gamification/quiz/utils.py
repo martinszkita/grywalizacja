@@ -1,15 +1,20 @@
 import os
 import django
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "gamification.settings")
-django.setup()
+# do ladnego printowania
+from pprint import pprint
+
+# os.environ.setdefault("DJANGO_SETTINGS_MODULE", "gamification.settings")
+# django.setup()
 
 import random
-from transformers import pipeline
+
+# from transformers import pipeline
 import morfeusz2
 import plwordnet
 import pickle
-from .models import *
+
+# from .models import *
 
 DATA_PATH = "/home/marcin/grywalizacja/gamification/quiz/data/"
 SENTENCES_PER_QUESTION_TYPE = 20
@@ -19,6 +24,16 @@ WHICH_BEST_FILL_MASK_ANSWER = (
 )
 
 morf = morfeusz2.Morfeusz()
+
+SKIP_WORDS = """
+a acz aczkolwiek aż albo ale ani aniżeli aby bowiem bądź bo by był była było byli bez bardziej bardzo będą będzie będący będąca będące
+czasem czasami czy czyż dla dlatego do dokąd dobrze dużo dzisiaj dziś gdy gdyby gdyż gdzie gdzieś gdziekolwiek iż
+jak jakby jako jakiś jakkolwiek jakoś jakże jest jeszcze już jeżeli jeśli każdy każda każde każdym kiedy kilka kilkanaście kilkadziesiąt
+lub lecz ma mają mam mamy może mogą możesz nad nade nawet na nie niech niestety nigdy nigdzie nikomu nikogo no o od ode około oraz oto
+po pod pode podczas poza potem ponieważ przed przede przez przy przecież raz razem sam sama samo sami same są skąd tak także tam też tylko tyle toteż trudno
+tu tutaj tymczasem u w we więc wobec właśnie wciąż wszyscy wszystkie wszystko z za zamiast zawsze zanim zatem zaś ze żeby że żaden żadna żadne żadnych
+jakikolwiek kiedykolwiek gdziekolwiek dokądkolwiek jakkolwiek ilekolwiek mniej więcej prawie chyba może trochę przynajmniej bynajmniej tudzież jedynie to Ale w i
+""".split()
 
 
 def import_sentences_from_txt(filename):  # podac tylko np. 'maroko' albo 'delfiny'
@@ -96,20 +111,22 @@ def create_fill_mask_data_herbert():
 def create_guess_replacement_data():
     fill_mask = pipeline("fill-mask", model="allegro/herbert-base-cased")
     saved_GR_data = 0
-    
+
     for text in Text.objects.all():
         sentences_without_data = Sentence.objects.filter(text=text, has_data=False)
-        question_count = min(sentences_without_data.count(), SENTENCES_PER_QUESTION_TYPE )
+        question_count = min(
+            sentences_without_data.count(), SENTENCES_PER_QUESTION_TYPE
+        )
         quiz, _ = Quiz.objects.get_or_create(text=text)
         quiz_data, _ = QuizData.objects.get_or_create(quiz=quiz)
 
         for sentence in sentences_without_data[:question_count]:
             question_data_o = QuestionData()
             question_data_o.quiz_data = quiz_data
-            
+
             if QuestionData.objects.filter(sentence=sentence).exists():
                 raise Exception(f"sentence z id: {sentence.id} juz w uzyciu!")
-            
+
             question_data_o.sentence = sentence
 
             # przygotowanie options:JSON
@@ -145,33 +162,39 @@ def create_guess_replacement_data():
                     question_data["choices"].append(
                         {"replacement_str": synonym, "source": "wordnet"}
                     )
-                    
+
             question_data_o.question_data = question_data
             question_data_o.save()
-            saved_GR_data +=1
+            saved_GR_data += 1
 
             question = Question()
             question.question_data = question_data_o
             question.question_type = Question.QuestionType.GR
             question.save()
             sentence.save()
-            
+
     print(f"zapisano {saved_GR_data} question_data obiektów")
 
 
-def get_synset_words(word):
-    with open("/home/marcin/grywalizacja/wordnet.pkl", "rb") as f:
-        wn = pickle.load(f)
-        word_lus = wn.find(word)
-        words = []
+# def get_synset_words_and_definitions(word="zamek"):
+#     return
+#     with open("/home/marcin/grywalizacja/wordnet.pkl", "rb") as f:
+#         wn = pickle.load(f)
+#         print(type(wn))
+#         print(dir(wn))
 
-        for lu in word_lus:
-            names = [
-                item.name for item in lu.synset.lexical_units if item.name.find(" ") < 0
-            ]  # odrzucamy wielowyrazowe
-            words.extend(names)
 
-    return list(set(words))  # usuwamy duplikaty
+def get_base_form_and_tag(word):
+    # morf = morfeusz2.Morfeusz()
+    analyses = morf.analyse(word)
+
+    if not analyses:
+        return {"base_form": word, "form_tag": None}
+
+    # wybieramy pierwszą interpretację
+    _, _, interp = analyses[0]
+
+    return {"base_form": interp[1].split(":")[0], "form_tag": interp[2]}
 
 
 def get_synonyms(word="grała"):
@@ -181,18 +204,6 @@ def get_synonyms(word="grała"):
 
         for orth, lemma, tag, name, labels in morf.generate(word, tag_id):
             return orth
-
-    def get_base_form_and_tag(word):
-        # morf = morfeusz2.Morfeusz()
-        analyses = morf.analyse(word)
-
-        if not analyses:
-            return {"base_form": word, "form_tag": None}
-
-        # wybieramy pierwszą interpretację
-        _, _, interp = analyses[0]
-
-        return {"base_form": interp[1].split(":")[0], "form_tag": interp[2]}
 
     base_form = get_base_form_and_tag(word)["base_form"].split(":")[0]
     base_form_tag = get_base_form_and_tag(word)["form_tag"]
@@ -231,7 +242,118 @@ def refill_fill_mask_data_wordnet():
 
     print(f"zapisano {synonyms_saved} synonimy w {questions_saved} pytaniach!")
 
+def get_synset_entries(word):
+    """
+    Zwraca słownik:
+    {
+        "word": podane w argumencie słowo,
+        "results": lista słowników kluczami: word, context_text
+    }
+    """
+    results = []
+    lus = wn.find(word)
+
+    for i, lu in enumerate(lus):
+        s = lu.synset
+        entry = {
+            "word": lu.name + str(i),  # np. deska1, kot3 ...
+            "context_text": (s.definition or "")
+            + (lu.description or "")
+            + (lu.rich_description or ""),  # polaczone opisy
+        }
+
+        results.append(entry)
+
+    return {"word": word, "results": results}
+
+
+def create_wsd_data(given_sentence="W zoo można zobaczyć różne gatunki"):
+    from collections import Counter
+    from operator import itemgetter
+
+    """
+    Przyjmuje tekst, np. pojedyncze zdanie
+
+    Zwraca słownik:
+    {
+        "sentence": 
+        "ambiguous_word": wybrane ze zdania słowo, które ma wiele znaczeń
+        "best_meaning": 
+            {
+                "word[i]": słowo z numerem znaczenia, np. kot1 lub pies3
+                "context_text": string ze słowami z definicji, opisów i przykładów
+                "overlap_words_count": liczba słów z kontekstu które pokrywają się z podanym tekstem
+                "overlap_words": lista powyższych słów
+            }
+    }
+    """
+    sentence = set(given_sentence.split())
+    most_ambiguous_homonym = None
+    most_meanings = 0
+
+    # usunięcie ze zdania nic niewnoszących słów
+    for word in sentence:
+        
+        # zamiana na formę bazową
+        word = get_base_form_and_tag(word)["base_form"]
+        
+        # usunięcie go jeśli niz nie znaczy
+        if word in SKIP_WORDS:
+            del word
+            continue
+
+        # sprawdzenie czy słowo jest homonimem
+        meanings_count = len(get_synset_entries(word)["results"])
+        if meanings_count < 2:
+            continue
+
+        # szukanie najbardziej wieloznaczeniowego wyrazu
+        if meanings_count > most_meanings:
+            most_ambiguous_homonym = word
+            most_meanings = meanings_count
+
+    if most_meanings < 2:
+        raise Exception("słabe zdanie, nie ma homonimu")
+
+    print(f"sentence: {sentence}")
+    print(f"najlepszy homonim: {most_ambiguous_homonym}")
+
+    biggest_overlap = 0
+    biggest_overlap_word = None
+    sentence_counter = Counter(sentence)
+    entries = []
+    best_overlap_id = None  # ktora definicja z kolei ma najwiekszy overlap
+
+    for i, entry in enumerate(get_synset_entries(most_ambiguous_homonym)["results"]):
+        option = {"id": i, "entry": entry, "overlap_count": 0}
+        context_counter = Counter(entry["context_text"])
+        common_counter = context_counter & sentence_counter
+
+        if common_counter:  # jesli są wspólne słowa
+            overlap_word, overlap_count = max(
+                dict(common_counter).items(), key=itemgetter(1)
+            )
+
+            option["overlap_count"] = overlap_count
+            option["overlap_word"] = overlap_word
+
+            if overlap_count > biggest_overlap:
+                biggest_overlap = overlap_count
+                biggest_overlap_word = overlap_word
+                best_overlap_id = i
+        entries.append(option)
+
+    return {
+        "best_overlap_id": best_overlap_id,
+        "entries": entries,
+        "sentence": given_sentence,
+        "most_ambiguous_word": most_ambiguous_homonym,
+    }
+
 
 if __name__ == "__main__":
-    # refill_fill_mask_data_wordnet()
-    create_guess_replacement_data()
+    sentence = "W tej desce jest wiele drzazg i trocin dla stolarza"
+    
+    with open("/home/marcin/grywalizacja/wordnet.pkl", "rb") as f:
+        wn = pickle.load(f)
+        pprint(create_wsd_data(sentence))
