@@ -16,7 +16,7 @@ class Text(models.Model):
         return self.sentences.count()
 
     @property
-    def sentences_without_data():
+    def sentences_without_data(self):
         return self.sentences.filter(has_data=False)
 
 

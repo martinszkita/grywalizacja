@@ -26,6 +26,8 @@ WHICH_BEST_FILL_MASK_ANSWER = (
 )
 
 morf = morfeusz2.Morfeusz()
+with open("/home/marcin/grywalizacja/wordnet.pkl", "rb") as f:
+    wn = pickle.load(f)
 
 SKIP_WORDS = """
 a acz aczkolwiek aż albo ale ani aniżeli aby bowiem bądź bo by był była było byli bez bardziej bardzo będą będzie będący będąca będące
@@ -187,7 +189,7 @@ def get_base_form_and_tag(word):
 
     return {"base_form": interp[1].split(":")[0], "form_tag": interp[2]}
 
-def get_synonyms(word="grała"):
+def get_synonyms(word):
     def generate_given_form(word, tag):
         resolver = morf._morfeusz_obj.getIdResolver()
         tag_id = resolver.getTagId(tag)
@@ -342,16 +344,16 @@ def create_full_wsd_data():
     created_question_datas = 0
     
     for text in Text.objects.all():
-        quiz = Quiz.objects.get(text=text) or  None
-        quiz_data = QuizData(quiz=quiz)
+        quiz , created_q = Quiz.objects.get_or_create(text=text)
+        quiz_data, created_qd = QuizData.objects.get_or_create(quiz=quiz)
         
         for sentence in text.sentences_without_data:
             
             # tworzenie obiektu QuestionData
             question_data_o = QuestionData()
-            question_data_o.sentence = sentence.sentence
+            question_data_o.sentence = sentence
             question_data_o.quiz_data = quiz_data
-            question.question_data = wsd_data_for_single_sentence(sentence.sentence)
+            question_data_o.question_data = wsd_data_for_single_sentence(sentence.sentence)
             question_data_o.save()
             
             created_question_datas += 1
@@ -364,11 +366,11 @@ def create_full_wsd_data():
             
             created_questions +=1
             
-    return print(f'{reated_questions=}, {created_question_datas=} ')
+    return print(f'{created_questions=}, {created_question_datas=} ')
             
 if __name__ == "__main__":
     sentence = "W tej desce jest wiele drzazg i trocin dla stolarza"
     
-    with open("/home/marcin/grywalizacja/wordnet.pkl", "rb") as f:
-        wn = pickle.load(f)
-        create_full_wsd_data()
+    # with open("/home/marcin/grywalizacja/wordnet.pkl", "rb") as f:
+    #     wn = pickle.load(f)
+    #     create_full_wsd_data()
