@@ -151,6 +151,16 @@ class SentenceAdmin(admin.ModelAdmin):
     ]
     list_filter = ["has_data", "text"]
 
+@admin.register(Text)
+class TextAdmin(admin.ModelAdmin):
+    class SentenceInline(admin.TabularInline):
+        model = Sentence
+        extra = 0
+        readonly_fields = ['id','sentence', 'has_data']
 
-admin.site.register(Text)
+    list_display = ['id', 'title', 'sentences_count']
+    readonly_fields = ['id', 'title', 'sentences_count']
+    fields = ['description', 'image', 'sentences_count']
+    inlines = [SentenceInline]
+    
 admin.site.register(Quiz)

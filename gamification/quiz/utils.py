@@ -1,11 +1,13 @@
 import os
 import django
+from collections import Counter
+from operator import itemgetter
 
 # do ladnego printowania
 from pprint import pprint
 
-# os.environ.setdefault("DJANGO_SETTINGS_MODULE", "gamification.settings")
-# django.setup()
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "gamification.settings")
+django.setup()
 
 import random
 
@@ -14,7 +16,7 @@ import morfeusz2
 import plwordnet
 import pickle
 
-# from .models import *
+from .models import *
 
 DATA_PATH = "/home/marcin/grywalizacja/gamification/quiz/data/"
 SENTENCES_PER_QUESTION_TYPE = 20
@@ -52,7 +54,6 @@ def import_sentences_from_txt(filename):  # podac tylko np. 'maroko' albo 'delfi
             saved += 1
 
     print(f"zaimportowano {saved} sentences z pliku {filename}")
-
 
 def create_fill_mask_data_herbert():
     fill_mask = pipeline("fill-mask", model="allegro/herbert-base-cased")
@@ -106,7 +107,6 @@ def create_fill_mask_data_herbert():
                 )
             question.save()
             print(f"Zapisano question: {question.id}")
-
 
 def create_guess_replacement_data():
     fill_mask = pipeline("fill-mask", model="allegro/herbert-base-cased")
@@ -175,15 +175,6 @@ def create_guess_replacement_data():
 
     print(f"zapisano {saved_GR_data} question_data obiektów")
 
-
-# def get_synset_words_and_definitions(word="zamek"):
-#     return
-#     with open("/home/marcin/grywalizacja/wordnet.pkl", "rb") as f:
-#         wn = pickle.load(f)
-#         print(type(wn))
-#         print(dir(wn))
-
-
 def get_base_form_and_tag(word):
     # morf = morfeusz2.Morfeusz()
     analyses = morf.analyse(word)
@@ -195,7 +186,6 @@ def get_base_form_and_tag(word):
     _, _, interp = analyses[0]
 
     return {"base_form": interp[1].split(":")[0], "form_tag": interp[2]}
-
 
 def get_synonyms(word="grała"):
     def generate_given_form(word, tag):
@@ -217,8 +207,7 @@ def get_synonyms(word="grała"):
         new_forms.add(new_form)
 
     return new_forms
-
-
+ 
 # zaklada ze sa juz dane z herberta!!!
 def refill_fill_mask_data_wordnet():
     questions_saved = 0
@@ -266,10 +255,7 @@ def get_synset_entries(word):
 
     return {"word": word, "results": results}
 
-
-def create_wsd_data(given_sentence="W zoo można zobaczyć różne gatunki"):
-    from collections import Counter
-    from operator import itemgetter
+def wsd_data_for_single_sentence(given_sentence):
 
     """
     Przyjmuje tekst, np. pojedyncze zdanie
@@ -341,6 +327,7 @@ def create_wsd_data(given_sentence="W zoo można zobaczyć różne gatunki"):
                 biggest_overlap = overlap_count
                 biggest_overlap_word = overlap_word
                 best_overlap_id = i
+                
         entries.append(option)
 
     return {
@@ -350,10 +337,38 @@ def create_wsd_data(given_sentence="W zoo można zobaczyć różne gatunki"):
         "most_ambiguous_word": most_ambiguous_homonym,
     }
 
-
+def create_full_wsd_data():
+    created_questions = 0
+    created_question_datas = 0
+    
+    for text in Text.objects.all():
+        quiz = Quiz.objects.get(text=text) or  None
+        quiz_data = QuizData(quiz=quiz)
+        
+        for sentence in text.sentences_without_data:
+            
+            # tworzenie obiektu QuestionData
+            question_data_o = QuestionData()
+            question_data_o.sentence = sentence.sentence
+            question_data_o.quiz_data = quiz_data
+            question.question_data = wsd_data_for_single_sentence(sentence.sentence)
+            question_data_o.save()
+            
+            created_question_datas += 1
+            
+            # tworzenie obiektu Question
+            question = Question()
+            question.question_data = question_data_o
+            question.question_type = 3 # TODO Question.QuestionType...
+            question.save()
+            
+            created_questions +=1
+            
+    return print(f'{reated_questions=}, {created_question_datas=} ')
+            
 if __name__ == "__main__":
     sentence = "W tej desce jest wiele drzazg i trocin dla stolarza"
     
     with open("/home/marcin/grywalizacja/wordnet.pkl", "rb") as f:
         wn = pickle.load(f)
-        pprint(create_wsd_data(sentence))
+        create_full_wsd_data()

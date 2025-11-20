@@ -1,6 +1,7 @@
 from django.db import models
 from django.shortcuts import HttpResponse
 
+
 class Text(models.Model):
     id = models.BigAutoField(primary_key=True)
     title = models.CharField(max_length=30)
@@ -10,6 +11,14 @@ class Text(models.Model):
     def __str__(self):
         return self.title
 
+    @property
+    def sentences_count(self):
+        return self.sentences.count()
+
+    @property
+    def sentences_without_data():
+        return self.sentences.filter(has_data=False)
+
 
 class Sentence(models.Model):
     id = models.BigAutoField(primary_key=True)
@@ -18,7 +27,7 @@ class Sentence(models.Model):
     has_data = models.BooleanField(default=False, null=True, blank=True)
 
     def __str__(self):
-        return f"{self.sentence}"
+        return f"{self.id}"
 
     def check_if_has_data(self) -> bool:
         return QuestionData.objects.filter(sentence=self).exists()
@@ -51,23 +60,24 @@ class QuestionData(models.Model):
 
     @property
     def question_type(self):
-        question_type_num = self.data.question_type # type: ignore
+        question_type_num = self.data.question_type  # type: ignore
         return Question.QuestionType(question_type_num).label
 
     @property
     def text(self):
         return self.sentence.text.title
-    
-        
+
+
 class Question(models.Model):
     class QuestionType(models.IntegerChoices):
         FM = 1, "FILL_MASK"
         GR = 2, "GUESS_REPLACEMENT"
-        
+        WSD = 3, "WORD_SENSE_DISAMBIGUATION"
+
         @classmethod
         def from_label(cls, label):
             return next((c for c in cls if c.label == label), None)
-            
+
     id = models.BigAutoField(primary_key=True)
     question_data = models.OneToOneField(
         QuestionData, on_delete=models.CASCADE, related_name="data"
@@ -122,4 +132,4 @@ class QuizAnswer(models.Model):
 
     @property
     def answered_questions_num(self):
-        return self.answers.all().count()  # type
+        return self.answers.all().count()
