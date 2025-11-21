@@ -6,8 +6,8 @@ from operator import itemgetter
 # do ladnego printowania
 from pprint import pprint
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "gamification.settings")
-django.setup()
+# os.environ.setdefault("DJANGO_SETTINGS_MODULE", "gamification.settings")
+# django.setup()
 
 import random
 import json
@@ -16,7 +16,7 @@ import morfeusz2
 import plwordnet
 import pickle
 
-from .models import *
+# from .models import *
 
 DATA_PATH = "/home/marcin/grywalizacja/gamification/quiz/data/"
 SENTENCES_PER_QUESTION_TYPE = 20
@@ -61,11 +61,13 @@ def import_sentences_from_txt(filename:str):  # podac tylko np. 'maroko' albo 'd
 def create_full_fill_mask_data():
     fill_mask = pipeline("fill-mask", model="allegro/herbert-base-cased")
     texts = Text.objects.all()
+    qd_saved = 0
 
     for text in texts:
-        for sentence in Sentence.objects.filter(text=text)[
-            :SENTENCES_PER_QUESTION_TYPE
-        ]:
+        sentences_without_data = Sentence.objects.filter(text=text, has_data=False)
+        question_count = min(sentences_without_data.count(), SENTENCES_PER_QUESTION_TYPE)
+        
+        for sentence in sentences_without_data[:question_count]:
             words = sentence.sentence.split()
             if not words:
                 continue
@@ -92,14 +94,12 @@ def create_full_fill_mask_data():
             
             # dane z wordnetu
             ss = get_synonyms(mask_str)
-            if ss is None:
-                print(f'Nie ma synonimów z wordnetu dla: {mask_str}')
-                
-            else:
-                for s in ss:
-                    data = {"token": s, "source": "wordnet"} 
-                    question_data["options"].extend(data)
-                    print(f'dodaje z wordnetu: {s}')
+            pprint(f'synonimy wordnet dla slowa:{mask_str} -> {ss}')
+            
+            for s in ss:
+                data = {"token": s, "source": "wordnet"} 
+                question_data["options"].append(data)
+                print(f'dodaje z wordnetu: {s}')
 
             quiz, _ = Quiz.objects.get_or_create(text=text)
             quiz_data, _ = QuizData.objects.get_or_create(quiz=quiz)
@@ -113,16 +113,19 @@ def create_full_fill_mask_data():
                 question_data_o.question_data = question_data
                 question_data_o.quiz_data = quiz_data
                 question_data_o.save()
+                qd_saved += 1
 
 
-            question = Question(
-                question_data=question_data_o, 
-                question_type=Question.QuestionType.FM,
-                #question_data__sentence=sentence,
-            ) 
-            
-            question.save()
-            print(f"Zapisano question: {question.id}")
+            question, created = Question.objects.get_or_create(
+                question_data=question_data_o,
+                defaults={"question_type": Question.QuestionType.FM},
+            )
+
+            if not created and question.question_type != Question.QuestionType.FM:
+                question.question_type = Question.QuestionType.FM
+                question.save()
+
+    print(f"Zapisano question_datas razem: {qd_saved}")
 
 def create_guess_replacement_data():
     fill_mask = pipeline("fill-mask", model="allegro/herbert-base-cased")
@@ -366,6 +369,4 @@ def create_full_wsd_data():
 if __name__ == "__main__":
     sentence = "W tej desce jest wiele drzazg i trocin dla stolarza"
     
-    # with open("/home/marcin/grywalizacja/wordnet.pkl", "rb") as f:
-    #     wn = pickle.load(f)
-    #     create_full_wsd_data()
+    print(get_synonyms("być"))
