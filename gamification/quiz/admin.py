@@ -21,7 +21,7 @@ class QuestionDataAdmin(admin.ModelAdmin):
             return queryset.all()
 
     class QuestionTypeFilter(admin.SimpleListFilter):
-        title = "question type"
+        title = "question_type"
         parameter_name = "question_type"
 
         def lookups(self, request, model_admin):
@@ -35,7 +35,7 @@ class QuestionDataAdmin(admin.ModelAdmin):
 
             value_int = Question.QuestionType.from_label(value)
 
-            return queryset.filter(data__question_type=value_int)
+            return queryset.filter(question__question_type=value_int)
 
     list_display = [
         "id",

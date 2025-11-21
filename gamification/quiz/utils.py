@@ -10,8 +10,8 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "gamification.settings")
 django.setup()
 
 import random
-
-# from transformers import pipeline
+import json
+from transformers import pipeline
 import morfeusz2
 import plwordnet
 import pickle
@@ -40,7 +40,8 @@ jakikolwiek kiedykolwiek gdziekolwiek dokądkolwiek jakkolwiek ilekolwiek mniej 
 """.split()
 
 
-def import_sentences_from_txt(filename):  # podac tylko np. 'maroko' albo 'delfiny'
+def import_sentences_from_txt(filename:str):  # podac tylko np. 'maroko' albo 'delfiny'
+        
     text_obj, created = Text.objects.get_or_create(title=filename)
     if created:
         text_obj.save()
@@ -57,7 +58,7 @@ def import_sentences_from_txt(filename):  # podac tylko np. 'maroko' albo 'delfi
 
     print(f"zaimportowano {saved} sentences z pliku {filename}")
 
-def create_fill_mask_data_herbert():
+def create_full_fill_mask_data():
     fill_mask = pipeline("fill-mask", model="allegro/herbert-base-cased")
     texts = Text.objects.all()
 
@@ -75,6 +76,8 @@ def create_fill_mask_data_herbert():
             masked_sentence = " ".join(words)
 
             results = fill_mask(masked_sentence, top_k=FILL_MASK_TOP_K)
+            
+            # dane z herberta
             question_data = {
                 "mask_index": mask_index,
                 "options": [
@@ -84,29 +87,40 @@ def create_fill_mask_data_herbert():
                         "source": "herbert",
                     }
                     for r in results
-                    # tutaj dojda jeszcze dane z wordnetu
-                ],
+                ]
             }
+            
+            # dane z wordnetu
+            ss = get_synonyms(mask_str)
+            if ss is None:
+                print(f'Nie ma synonimów z wordnetu dla: {mask_str}')
+                
+            else:
+                for s in ss:
+                    data = {"token": s, "source": "wordnet"} 
+                    question_data["options"].extend(data)
+                    print(f'dodaje z wordnetu: {s}')
 
             quiz, _ = Quiz.objects.get_or_create(text=text)
             quiz_data, _ = QuizData.objects.get_or_create(quiz=quiz)
 
-            question_data, created = QuestionData.objects.get_or_create(
+            question_data_o, created = QuestionData.objects.get_or_create(
                 sentence=sentence,
                 defaults={"quiz_data": quiz_data, "question_data": question_data},
             )
 
             if not created:
-                question_data.options = options
-                question_data.quiz_data = quiz_data
-                question_data.save()
+                question_data_o.question_data = question_data
+                question_data_o.quiz_data = quiz_data
+                question_data_o.save()
 
-            question = Question.objects.filter(question_data__sentence=sentence).first()
 
-            if not question:
-                question = Question(
-                    question_data=question_data, question_type=Question.QuestionType.FM
-                )
+            question = Question(
+                question_data=question_data_o, 
+                question_type=Question.QuestionType.FM,
+                #question_data__sentence=sentence,
+            ) 
+            
             question.save()
             print(f"Zapisano question: {question.id}")
 
@@ -199,39 +213,16 @@ def get_synonyms(word):
 
     base_form = get_base_form_and_tag(word)["base_form"].split(":")[0]
     base_form_tag = get_base_form_and_tag(word)["form_tag"]
-    synset = get_synset_words(base_form)
+    synset = get_synset_entries(base_form)['results']
     new_forms = set()
 
     for s in synset:
-        new_form = generate_given_form(s, base_form_tag)
+        new_form = generate_given_form(s['word'], base_form_tag)
         if new_form is None or new_form == word:
             continue
         new_forms.add(new_form)
 
     return new_forms
- 
-# zaklada ze sa juz dane z herberta!!!
-def refill_fill_mask_data_wordnet():
-    questions_saved = 0
-    synonyms_saved = 0
-    for qd in QuestionData.objects.all():
-        mask_index = qd.question_data["mask_index"]
-        if mask_index is None:
-            print("refill, mask index error!")
-            return
-        word = qd.sentence.sentence.split()[mask_index]
-        print(f"dodaje synonimy dla slowa: {word}")
-        data = []
-        saved = 0
-        for s in get_synonyms(word):
-            print(s)
-            synonyms_saved += 1
-            data.append({"token": s, "source": "wordnet"})
-        qd.question_data["options"].extend(data)
-        qd.save()
-        questions_saved += 1
-
-    print(f"zapisano {synonyms_saved} synonimy w {questions_saved} pytaniach!")
 
 def get_synset_entries(word):
     """
@@ -303,8 +294,8 @@ def wsd_data_for_single_sentence(given_sentence):
     if most_meanings < 2:
         raise Exception("słabe zdanie, nie ma homonimu")
 
-    print(f"sentence: {sentence}")
-    print(f"najlepszy homonim: {most_ambiguous_homonym}")
+    # print(f"sentence: {sentence}")
+    # print(f"najlepszy homonim: {most_ambiguous_homonym}")
 
     biggest_overlap = 0
     biggest_overlap_word = None
@@ -346,8 +337,12 @@ def create_full_wsd_data():
     for text in Text.objects.all():
         quiz , created_q = Quiz.objects.get_or_create(text=text)
         quiz_data, created_qd = QuizData.objects.get_or_create(quiz=quiz)
+        sentences = text.sentences_without_data
         
-        for sentence in text.sentences_without_data:
+        if sentences.count() < SENTENCES_PER_QUESTION_TYPE:
+            raise Exception(f'nie ma {SENTENCES_PER_QUESTION_TYPE} dla tekstu {text.title}')
+        
+        for sentence in sentences:
             
             # tworzenie obiektu QuestionData
             question_data_o = QuestionData()

@@ -60,7 +60,7 @@ class QuestionData(models.Model):
 
     @property
     def question_type(self):
-        question_type_num = self.data.question_type  # type: ignore
+        question_type_num = self.question.question_type 
         return Question.QuestionType(question_type_num).label
 
     @property
@@ -80,7 +80,7 @@ class Question(models.Model):
 
     id = models.BigAutoField(primary_key=True)
     question_data = models.OneToOneField(
-        QuestionData, on_delete=models.CASCADE, related_name="data"
+        QuestionData, on_delete=models.CASCADE, related_name="question"
     )
     question_type = models.PositiveSmallIntegerField(choices=QuestionType.choices)
 
