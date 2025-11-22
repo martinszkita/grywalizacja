@@ -62,6 +62,33 @@ class GuessReplacementForm(ModelForm):
         fields = ["answer", "user_comment", "chosen_word"]
 
 
+class WsdQuestionForm(ModelForm):
+    answer = forms.ChoiceField(widget=forms.RadioSelect)
+    user_comment = forms.CharField(
+        label="Twoja notatka/komentarz do pytania",
+        widget=forms.Textarea(
+            attrs={
+                "class": "form-control",
+                "rows": 4,
+                "placeholder": "Według mnie to pytanie jest bez sensu, bo...",
+            }
+        ),
+        required=False,
+    )
+
+    class Meta:
+        model = QuestionAnswer
+        fields = ["answer", "user_comment"]
+
+    def __init__(self, *args, **kwargs):
+        choices = kwargs.pop("choices", None)
+        self.question = kwargs.pop("question", None)
+        super().__init__(*args, **kwargs)
+
+        if choices:
+            self.fields["answer"].choices = choices
+
+
 class UsernameForm(forms.Form):
     username = forms.CharField(
         label="Jak chcesz zostać zapisany/zapisana w bazie?",
