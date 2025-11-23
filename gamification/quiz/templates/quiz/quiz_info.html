@@ -13,6 +13,8 @@
 
   <a href="{% url 'topic_choice' %}" class="btn btn-primary btn-sm" role="button" aria-pressed="true"> Wybierz tematykę quizu!</a>
   <a href="{% url 'question' 'guess-replacement' 0 %}" class="btn btn-primary btn-sm">skip do guess_replacement_question</a>
+  <a href="{% url 'question' 'fill-mask' 0 %}" class="btn btn-primary btn-sm">skip do fill_mask</a>
+  <a href="{% url 'question' 'wsd' 0 %}" class="btn btn-primary btn-sm">skip do wsd</a>
   <a href="{% url 'quiz_end' %}" class="btn btn-primary btn-sm">skip do quiz_end</a>
   <a href="{% url 'feedback' %}" class="btn btn-primary btn-sm">skip do feedback</a>
 

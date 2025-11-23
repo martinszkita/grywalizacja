@@ -4,10 +4,16 @@ from django.shortcuts import render, redirect, HttpResponse
 from django.contrib import messages
 from .models import *
 from .forms import *
+import pprint
 
 
 QUESTION_ORDER = [
-    ("fill-mask", Question.QuestionType.FM, FillMaskForm, "quiz/fill_mask_question.html"),
+    (
+        "fill-mask",
+        Question.QuestionType.FM,
+        FillMaskForm,
+        "quiz/fill_mask_question.html",
+    ),
     (
         "guess-replacement",
         Question.QuestionType.GR,
@@ -16,7 +22,7 @@ QUESTION_ORDER = [
     ),
     ("wsd", Question.QuestionType.WSD, WsdQuestionForm, "quiz/wsd_question.html"),
 ]
-QUESTION_PER_SECTION = 20
+QUESTION_PER_SECTION = 10
 QUESTION_SECTION_MAP = {
     slug: {
         "question_type": question_type,
@@ -32,10 +38,8 @@ QUESTION_SECTION_MAP = {
 def quiz(request):
     return redirect("quiz_info")
 
-
 def quiz_info(request):
     return render(request, "quiz/quiz_info.html", {})
-
 
 def topic_choice(request):
     texts = Text.objects.all()
@@ -84,7 +88,7 @@ def _get_quiz_data_or_redirect(request):
 
     return quiz_data, None
 
-
+  
 def question(request, section: str, question_num: int):
     section_config = QUESTION_SECTION_MAP.get(section)
     if not section_config:
@@ -122,12 +126,15 @@ def question(request, section: str, question_num: int):
         "question_count": question_count,
         "section": section,
     }
+    pprint.pp(f'question_data: {question_data.question_data}')
 
     try:
         choices = question_data.options_json_to_tuple()
     except KeyError:
+        print("option_json_to_tuple fail")
         choices = []
 
+    
     if section == "fill-mask":
         return _handle_fill_mask_question(
             request=request,
@@ -166,7 +173,6 @@ def _attach_answer_to_quiz(question_answer, question, quiz_answer_id):
     question_answer.quiz_answer = quiz_answer
     question_answer.save()
 
-
 def _handle_fill_mask_question(
     request,
     question,
@@ -181,10 +187,13 @@ def _handle_fill_mask_question(
         return redirect("start_quiz")
 
     question_payload = (
-        question_data.question_data if isinstance(question_data.question_data, dict) else {}
+        question_data.question_data
+        if isinstance(question_data.question_data, dict)
+        else {}
     )
     mask_index = question_payload.get("mask_index")
     masked_sentence = question_data.sentence.sentence.split()
+    
     if mask_index is not None and mask_index < len(masked_sentence):
         masked_sentence[mask_index] = "_____"
 
@@ -224,11 +233,18 @@ def _handle_guess_replacement_question(
         request.POST or None, question=question, choices=choices
     )
 
-    context = {**base_context, "form": form, "sentence": question_data.sentence.sentence}
+    context = {
+        **base_context,
+        "form": form,
+        "sentence": question_data.sentence.sentence,
+    }
 
     if request.method == "POST":
         if form.is_valid():
-            if form.cleaned_data["answer"] == "tak" and not form.cleaned_data["chosen_word"]:
+            if (
+                form.cleaned_data["answer"] == "tak"
+                and not form.cleaned_data["chosen_word"]
+            ):
                 messages.error(request, "Wskaż słowo, które zostało zamienione.")
                 return render(request, template, context)
 
@@ -260,19 +276,25 @@ def _handle_wsd_question(
     base_context,
     choices,
 ):
+    print('choices:')
+    pprint.pp(choices)
+    
     quiz_answer_id = request.session.get("quiz_answer_id")
     if not quiz_answer_id:
         return redirect("start_quiz")
 
     question_payload = (
-        question_data.question_data if isinstance(question_data.question_data, dict) else {}
+        question_data.question_data
+        if isinstance(question_data.question_data, dict)
+        else {}
     )
-    target_word = question_payload.get("target_word")
+    
+    most_ambiguous_word = question_payload.get("most_ambiguous_word")
 
     context = {
         **base_context,
         "sentence": question_data.sentence.sentence,
-        "target_word": target_word,
+        "most_ambiguous_word": most_ambiguous_word,
     }
 
     form = WsdQuestionForm(request.POST or None, choices=choices, question=question)
@@ -286,7 +308,6 @@ def _handle_wsd_question(
         messages.error(request, "Proszę zaznaczyć odpowiedź!")
 
     return render(request, template, context)
-
 
 def quiz_end(request):
     form = UsernameForm(request.POST or None)
@@ -309,15 +330,16 @@ def quiz_end(request):
     context = {"form": form}
     return render(request, "quiz/quiz_end.html", context)
 
-
 def summary(request):
     quiz_answer_id = request.session.get("quiz_answer_id")
     if not quiz_answer_id:
         return redirect("topic_choice")
 
-    quiz_answer = QuizAnswer.objects.select_related("quiz__text").prefetch_related(
-        "answers__question"
-    ).get(id=quiz_answer_id)
+    quiz_answer = (
+        QuizAnswer.objects.select_related("quiz__text")
+        .prefetch_related("answers__question")
+        .get(id=quiz_answer_id)
+    )
 
     question_counts = {
         "fill_mask": quiz_answer.answers.filter(
@@ -338,7 +360,6 @@ def summary(request):
     }
 
     return render(request, "quiz/summary.html", context)
-
 
 def feedback(request):
     if request.session["quiz_answer_id"]:

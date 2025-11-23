@@ -1,13 +1,14 @@
-from collections import Counter
-from operator import itemgetter
-s1 = "aaaaaaaaaaaaaaaaa"
-s2 = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+import json
+import pprint
 
-c1 = Counter(s1)
-c2 = Counter(s2)
+data_string = {"best_overlap_id": 'null', "entries": [{"id": 0, "entry": {"word": "być0", "context_text": "istnieć, egzystować (\"był sobie król, był sobie paź i była też królewna\") <##VLC: ST>"}, "overlap_count": 0}, {"id": 1, "entry": {"word": "być1", "context_text": "występować gdzieś, pojawiać się, ukazywać sięznajdować się gdzieś, być obecnym (\"widać, że wasz kot bardzo lubi być u Joli podczas waszej nieobecności\", \"książka, której szukasz, jest na czwartej półce od dołu\") <##VLC: ST>"}, "overlap_count": 0}, {"id": 2, "entry": {"word": "być2", "context_text": "znajdować się w jakimś stanie, doznawać czegoś (\"cztery lata temu był w życiowej formie\", \"Kaśka jest w ciąży, dziwne, że ci nie mówiła\", \"od tamtego wypadku jest w strachu za każdym razem, kiedy ktoś przy niej połyka tabletkę\", \"nie jestem dziś w nastroju na filmy grozy\", \"czy będziesz wolna jutro około osiemnastej?\") <##VLC: ST>"}, "overlap_count": 0}, {"id": 3, "entry": {"word": "być3", "context_text": "mieć miejsce, odbywać się, trwać przez pewien czas (\"to jutro jest ta impreza z okazji imienin Karoliny?\", \"kiedy się poznaliśmy też była wiosna\", \"mam nadzieję, że nie będzie poprawin\") <##VLC: ST, ZD>"}, "overlap_count": 0}, {"id": 4, "entry": {"word": "być4", "context_text": "brać w czymś udział (\"być na wojnie\", \"nigdy nie byłem na równie udanym weselu\") <##VLC: ST>"}, "overlap_count": 0}, {"id": 5, "entry": {"word": "być5", "context_text": "cechować się czymś i dać się opisać w odniesieniu do jakichś wydarzeń (\"nie dawaj mu cukierków, on jest wciąż przed obiadem\", \"jak już będziesz po pracy, daj mi znać, to się umówimy\", \"nie mogę się doczekać, kiedy będę po egzaminie specjalizacyjnym - wiele rzeczy mam zaplanowanych na ten czas, kiedy będę wolna\") <##VLC: ST>"}, "overlap_count": 0}, {"id": 6, "entry": {"word": "być6", "context_text": "sięgać (\"ta sukienka jest do kolan\", \"podczas powodzi woda była u nas do drugiego piętra\") <##VLC: ST>"}, "overlap_count": 0}, {"id": 7, "entry": {"word": "być7", "context_text": "brać w czymś udział przez długi czas i nie oddawać się danej czynności ciągle (\"jego syn jest jeszcze na studiach\", \"moja koleżanka była w radzie miasta\", \"Emil zaraz po maturze był na prawie, a teraz jest na jakiejś filologii\") <##VLC: CZ>"}, "overlap_count": 0}, {"id": 8, "entry": {"word": "być8", "context_text": "mieć jakąś cechę, móc być scharakteryzowanym w jakiś sposób - ŁĄCZNIK (\"po wypraniu bluzka zmieniła kolor i jest teraz całkiem szara\", \"pamiętam, że krzaczki przed domem były bardzo dobrze utrzymane\", \"życie jest trudne\", \"te haftowane serwetki nie były kwadratowe?\", \"córka twojego szefa jest bardzo ładna\", \"ta zupa nie jest zła - radzę spróbować\", \"ta tkanina jest zbyt gruba i nie nadaje się na zasłony\", \"ta sprawa była bardzo skomplikowana - detektyw wiedział, że szybko jej nie rozwiąże\", \"Krzysiek jest z Poznania\") <##VLC: ST>"}, "overlap_count": 0}, {"id": 9, "entry": {"word": "być9", "context_text": "móc być nazwanym kimś/czymś - ŁĄCZNIK (\"jego tato jest pilotem\", \"ze Zbycha jest kawał gnoja\", \"to był mój ulubiony fotel, a teraz zostały z niego tylko drzazgi\", \"wszystko to były jedynie domysły\") <##VLC: ST>"}, "overlap_count": 0}], "sentence": " Ich rozwój jest nie tylko triumfem nauki, ale też zaproszeniem do refleksji nad tym, czym właściwie jest inteligencja", "most_ambiguous_word": "być", "base_form": "jest"}
 
-# znak ktory powtarza sie najwiecej razy w stringach s1 i s2
 
-char, n = max(dict(c1+c2).items(), key=itemgetter(1))
+data = dict(data_string)
 
-print(char, n)
+for entry in data['entries']:
+    # word = entry['entry']['word']
+    context_text = entry['entry']['context_text']
+    pprint.pprint(context_text)
+    
+

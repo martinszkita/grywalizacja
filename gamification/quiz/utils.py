@@ -279,7 +279,6 @@ def wsd_data_for_single_sentence(given_sentence):
     most_ambiguous_homonym = None
     most_meanings = 0
 
-    # usunięcie ze zdania nic niewnoszących słów
     for word in sentence:
         
         # zamiana na formę bazową
@@ -300,11 +299,9 @@ def wsd_data_for_single_sentence(given_sentence):
             most_ambiguous_homonym = word
             most_meanings = meanings_count
 
+    print(f'odmieniona forma: {base_form}')
     if most_meanings < 2:
         raise Exception("słabe zdanie, nie ma homonimu")
-
-    print(f"sentence: {sentence}")
-    print(f"najlepszy homonim: {most_ambiguous_homonym}")
 
     biggest_overlap = 0
     biggest_overlap_word = None
@@ -331,7 +328,8 @@ def wsd_data_for_single_sentence(given_sentence):
                 best_overlap_id = i
                 
         entries.append(option)
-
+        
+    
     return {
         "best_overlap_id": best_overlap_id,
         "entries": entries,
@@ -369,8 +367,4 @@ def create_full_wsd_data():
     return print(f'{created_questions=}, {created_question_datas=} ')
             
 if __name__ == "__main__":
-    sentence = "W tej desce jest wiele drzazg i trocin dla stolarza"
-    
-    # with open("/home/marcin/grywalizacja/wordnet.pkl", "rb") as f:
-    #     wn = pickle.load(f)
-    #     create_full_wsd_data()
+    create_full_wsd_data()

@@ -1,6 +1,6 @@
 from django.db import models
 from django.shortcuts import HttpResponse
-
+import re
 
 class Text(models.Model):
     id = models.BigAutoField(primary_key=True)
@@ -47,15 +47,25 @@ class QuestionData(models.Model):
     quiz_data = models.ForeignKey(
         "QuizData", on_delete=models.CASCADE, related_name="datas"
     )
+    WSD_CHOICES_COUNT = 5
 
     def __str__(self):
         return f"{self.id} {self.sentence.text.title}"
 
     def options_json_to_tuple(self):
         choices = []
-        for option in self.question_data["options"]:
-            opt = option["token"]
-            choices.append((opt, opt.upper()))
+        if self.question_type == Question.QuestionType.WSD.label:
+            for entry in self.question_data['entries']:
+                word = entry['entry']['word']
+                context_text = entry['entry']['context_text']
+                choices.append((word, context_text))
+                
+                if len(choices) >= self.WSD_CHOICES_COUNT:
+                    break
+        else:   
+            for option in self.question_data["options"]:
+                opt = option["token"]
+                choices.append((opt, opt.upper()))
         return choices
 
     @property
