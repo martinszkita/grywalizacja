@@ -208,10 +208,12 @@ def _handle_fill_mask_question(
         if form.is_valid():
             question_answer = form.save(commit=False)
             _attach_answer_to_quiz(question_answer, question, quiz_answer_id)
+            messages.success(request, "Pomyślnie zapisano odpowiedź do poprzedniego pytania!")
             return redirect(
                 "question", section=QUESTION_ORDER[0][0], question_num=question_num + 1
             )
         messages.error(request, "Proszę zaznaczyć odpowiedź!")
+
 
     return render(request, template, context)
 
@@ -257,13 +259,15 @@ def _handle_guess_replacement_question(
             question_answer.answer = current_answer
 
             _attach_answer_to_quiz(question_answer, question, quiz_answer_id)
+            messages.success(request, "Pomyślnie zapisano odpowiedź do poprzedniego pytania!")
+            
             return redirect(
                 "question",
                 section="guess-replacement",
                 question_num=question_num + 1,
             )
         messages.error(request, "Proszę zaznaczyć odpowiedź!")
-
+        
     return render(request, template, context)
 
 
@@ -304,6 +308,7 @@ def _handle_wsd_question(
         if form.is_valid():
             question_answer = form.save(commit=False)
             _attach_answer_to_quiz(question_answer, question, quiz_answer_id)
+            messages.success(request, "Pomyślnie zapisano odpowiedź do poprzedniego pytania!")
             return redirect("question", section="wsd", question_num=question_num + 1)
         messages.error(request, "Proszę zaznaczyć odpowiedź!")
 
@@ -323,43 +328,12 @@ def quiz_end(request):
             quiz_answer.username = username
             quiz_answer.save()
             request.session["username"] = username
-            return redirect("summary")
+            return redirect("feedback")
         messages.error(request, "Niepoprawna nazwa użytkownika!")
         return redirect("quiz_end")
 
     context = {"form": form}
     return render(request, "quiz/quiz_end.html", context)
-
-def summary(request):
-    quiz_answer_id = request.session.get("quiz_answer_id")
-    if not quiz_answer_id:
-        return redirect("topic_choice")
-
-    quiz_answer = (
-        QuizAnswer.objects.select_related("quiz__text")
-        .prefetch_related("answers__question")
-        .get(id=quiz_answer_id)
-    )
-
-    question_counts = {
-        "fill_mask": quiz_answer.answers.filter(
-            question__question_type=Question.QuestionType.FM
-        ).count(),
-        "guess_replacement": quiz_answer.answers.filter(
-            question__question_type=Question.QuestionType.GR
-        ).count(),
-        "wsd": quiz_answer.answers.filter(
-            question__question_type=Question.QuestionType.WSD
-        ).count(),
-    }
-
-    context = {
-        "quiz_answer": quiz_answer,
-        "question_counts": question_counts,
-        "total_answered": sum(question_counts.values()),
-    }
-
-    return render(request, "quiz/summary.html", context)
 
 def feedback(request):
     if request.session["quiz_answer_id"]:
@@ -391,5 +365,3 @@ def feedback(request):
 
     return render(request, "quiz/feedback.html", context)
 
-def quiz_stats(request):
-    pass

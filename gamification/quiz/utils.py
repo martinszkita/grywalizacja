@@ -12,9 +12,9 @@ django.setup()
 import random
 
 # from transformers import pipeline
-import morfeusz2
-import plwordnet
-import pickle
+# import morfeusz2
+# import plwordnet
+# import pickle
 
 from .models import *
 
@@ -25,9 +25,9 @@ WHICH_BEST_FILL_MASK_ANSWER = (
     3  # ktora najlespza z kolei opcja do wybrania z fill_mask()
 )
 
-morf = morfeusz2.Morfeusz()
-with open("/home/marcin/grywalizacja/wordnet.pkl", "rb") as f:
-    wn = pickle.load(f)
+# morf = morfeusz2.Morfeusz()
+# with open("/home/marcin/grywalizacja/wordnet.pkl", "rb") as f:
+#     wn = pickle.load(f)
 
 SKIP_WORDS = """
 a acz aczkolwiek aż albo ale ani aniżeli aby bowiem bądź bo by był była było byli bez bardziej bardzo będą będzie będący będąca będące
@@ -357,6 +357,17 @@ def create_full_wsd_data():
             created_questions +=1
             
     return print(f'{created_questions=}, {created_question_datas=} ')
+
+def _clean_wsd_context_text(str_to_remove:str):
+    q_datas = QuestionData.objects.filter(data__question_type=3)
+    for q in q_datas:
+        for e in q.question_data['entries']:
+            text = e['entry']['context_text'].replace(str_to_remove,'')
+            e['entry']['context_text'] = text.strip()
+        q.save()
+            
+            
             
 if __name__ == "__main__":
-    create_full_wsd_data()
+    s = '##K:'
+    _clean_wsd_context_text(s)

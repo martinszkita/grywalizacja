@@ -13,5 +13,4 @@ urlpatterns = [
     ),
     path('feedback', views.feedback, name='feedback'),
     path('quiz_end', views.quiz_end, name='quiz_end'),
-    path('summary', views.summary, name='summary'),
 ]

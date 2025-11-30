@@ -159,8 +159,8 @@ class TextAdmin(admin.ModelAdmin):
         readonly_fields = ['id','sentence', 'has_data']
 
     list_display = ['id', 'title', 'sentences_count']
-    readonly_fields = ['id', 'title', 'sentences_count']
-    fields = ['description', 'image', 'sentences_count']
+    readonly_fields = ['id', 'sentences_count']
+    fields = ['description', 'title', 'image', 'sentences_count']
     inlines = [SentenceInline]
     
 admin.site.register(Quiz)
