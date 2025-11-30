@@ -238,7 +238,9 @@ def get_synset_entries(word):
     Zwraca słownik:
     {
         "word": podane w argumencie słowo,
-        "results": lista słowników kluczami: word, context_text
+        "results": lista słowników:
+            "word": znacznie slowa, np. kot1, kot2..
+            "context_text": połączone w jedno opis, definicja i bogata definicja
     }
     """
     results = []
@@ -258,22 +260,12 @@ def get_synset_entries(word):
     return {"word": word, "results": results}
 
 def wsd_data_for_single_sentence(given_sentence):
-
     """
-    Przyjmuje tekst, np. pojedyncze zdanie
-
     Zwraca słownik:
-    {
-        "sentence": 
-        "ambiguous_word": wybrane ze zdania słowo, które ma wiele znaczeń
-        "best_meaning": 
-            {
-                "word[i]": słowo z numerem znaczenia, np. kot1 lub pies3
-                "context_text": string ze słowami z definicji, opisów i przykładów
-                "overlap_words_count": liczba słów z kontekstu które pokrywają się z podanym tekstem
-                "overlap_words": lista powyższych słów
-            }
-    }
+    "best_overlap_id" -> id najlepszego 
+    "entries": entries dla most_ambiguous_homonym,
+    "sentence": given_sentence,
+    "most_ambiguous_word": most_ambiguous_homonym,
     """
     sentence = set(given_sentence.split())
     most_ambiguous_homonym = None

@@ -147,6 +147,17 @@ p.text-muted {
   transition: all 0.2s ease;
 }
 
+/* kafelek z odpowiedzią w WSD */
+.answer-tile {
+  white-space: normal;     /* Pozwala tekstowi się zawijać */
+  width:100%;
+  min-width: 200px;
+  max-width: 100%;         /* Nigdy nie wychodzi poza stronę */
+  text-align: center;      /* Żeby wyglądało jak kafelek */
+  word-break: break-word;  /* Na wszelki wypadek */
+}
+
+
 
 
 
