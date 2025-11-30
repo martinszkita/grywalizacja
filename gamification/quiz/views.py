@@ -22,7 +22,8 @@ QUESTION_ORDER = [
     ),
     ("wsd", Question.QuestionType.WSD, WsdQuestionForm, "quiz/wsd_question.html"),
 ]
-QUESTION_PER_SECTION = 10
+QUESTION_PER_SECTION = 1
+
 QUESTION_SECTION_MAP = {
     slug: {
         "question_type": question_type,
@@ -36,7 +37,7 @@ QUESTION_SECTION_MAP = {
 
 # Create your views here.
 def quiz(request):
-    return redirect("quiz_info")
+    return redirect("start_quiz")
 
 def quiz_info(request):
     return render(request, "quiz/quiz_info.html", {})
@@ -126,7 +127,6 @@ def question(request, section: str, question_num: int):
         "question_count": question_count,
         "section": section,
     }
-    pprint.pp(f'question_data: {question_data.question_data}')
 
     try:
         choices = question_data.options_json_to_tuple()
@@ -364,7 +364,7 @@ def feedback(request):
                 quiz_answer.user_feedback = user_feedback
 
             quiz_answer.save()
-            return redirect("quiz")
+            return redirect("home")
 
         messages.error(request, form.errors.as_text())
         return redirect("feedback")
