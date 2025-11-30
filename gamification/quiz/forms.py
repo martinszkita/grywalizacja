@@ -104,21 +104,19 @@ class UserFeedbackForm(forms.Form):
     user_feedback = forms.IntegerField(
         label="Jak oceniasz quiz?",
         min_value=0,
-        max_value=10,
+        max_value=5,
         required=False,
-        widget=forms.NumberInput(
-            attrs={
-                "type": "range",
-                "min": "0",
-                "max": "10",
-                "step": "1",
-                "oninput": 'document.getElementById("val").innerText = this.value',
-            }
-        ),
+        widget=forms.HiddenInput(attrs={"id": "id_user_feedback"}),
     )
 
     user_comment = forms.CharField(
-        widget=forms.TextInput(attrs={"placeholder": "Uwielbiam robić takie quizy.."}),
+        widget=forms.Textarea(
+            attrs={
+                "placeholder": "Uwielbiam robić takie quizy..",
+                "rows": 3,
+                "class": "form-control",
+            }
+        ),
         required=False,
         label='Co sądzisz o wypełnionym quizie?'
     )
