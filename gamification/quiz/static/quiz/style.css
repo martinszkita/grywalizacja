@@ -164,6 +164,7 @@ p.text-muted {
   line-height: 1.4;
   text-align: center;      /* Żeby wyglądało jak kafelek */
   word-break: break-word;  /* Na wszelki wypadek */
+  min-height: 56px;
 }
 
 
