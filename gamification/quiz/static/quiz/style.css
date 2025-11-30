@@ -148,12 +148,27 @@ p.text-muted {
 }
 
 /* kafelek z odpowiedzią w WSD */
+.answer-grid {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.answer-option {
+  width: 100%;
+}
+
 .answer-tile {
+  display: block;
   white-space: normal;     /* Pozwala tekstowi się zawijać */
-  width:100%;
-  min-width: 200px;
+  width: 100%;
   max-width: 100%;         /* Nigdy nie wychodzi poza stronę */
-  text-align: center;      /* Żeby wyglądało jak kafelek */
+  padding: 12px 16px;
+  font-size: 1rem;
+  line-height: 1.5;
+  text-align: left;
   word-break: break-word;  /* Na wszelki wypadek */
 }
 
