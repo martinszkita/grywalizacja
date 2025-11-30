@@ -21,9 +21,9 @@
   <form method="post" class="text-center container-fluid">
     {% csrf_token %}
 
-    <div class="answer-grid mb-4">
+    <div class="row justify-content-center answer-grid mb-4">
       {% for value, label in form.fields.answer.choices %}
-        <div class="answer-option">
+        <div class="col-12 col-md-6 col-lg-4 mb-3">
           <input type="radio" class="btn-check" name="answer" id="wsd{{ forloop.counter }}" value="{{ value }}">
           <label class="btn btn-outline-primary shadow-sm answer-tile" for="wsd{{ forloop.counter }}">
             {{ label }}

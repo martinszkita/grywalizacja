@@ -149,26 +149,20 @@ p.text-muted {
 
 /* kafelek z odpowiedzią w WSD */
 .answer-grid {
-  max-width: 900px;
+  max-width: 1100px;
   margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.answer-option {
-  width: 100%;
 }
 
 .answer-tile {
   display: block;
   white-space: normal;     /* Pozwala tekstowi się zawijać */
   width: 100%;
+  min-height: 100%;
   max-width: 100%;         /* Nigdy nie wychodzi poza stronę */
-  padding: 12px 16px;
-  font-size: 1rem;
-  line-height: 1.5;
-  text-align: left;
+  padding: 14px 16px;
+  font-size: 1.1rem;
+  line-height: 1.4;
+  text-align: center;      /* Żeby wyglądało jak kafelek */
   word-break: break-word;  /* Na wszelki wypadek */
 }
 
