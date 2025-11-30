@@ -1,15 +1,76 @@
 {% extends 'base.html' %}
 {% block title %} Feedback {% endblock title %}
 {% block content %}
-  <h1 class="text-center mb-4">Feedback</h1>
+  <div class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-6 col-md-8">
+        <div class="card shadow-sm">
+          <div class="card-body p-4">
+            <h1 class="text-center mb-4">Feedback</h1>
+            <form method="post" class="needs-validation" novalidate>
+              {% csrf_token %}
+              {{ form.user_feedback }}
+              <div class="mb-4 text-center">
+                <p class="fw-semibold mb-2">{{ form.user_feedback.label }}</p>
+                <div class="star-rating d-flex justify-content-center gap-2 mb-2">
+                  {% for star in star_values %}
+                    <button
+                      type="button"
+                      class="btn btn-link text-decoration-none p-0 star text-muted fs-2"
+                      data-value="{{ star }}"
+                      aria-label="{{ star }} star"
+                    >★</button>
+                  {% endfor %}
+                </div>
+                <div class="d-flex align-items-center justify-content-center gap-2">
+                  <small id="rating-label" class="text-muted">0 z 5 gwiazdek</small>
+                  <button type="button" class="btn btn-outline-secondary btn-sm" id="clear-rating">Wyczyść</button>
+                </div>
+              </div>
 
-  <div class="slider-container">
-    <div id="rating-slider">
-      <form method="post">
-        {% csrf_token %}
-        {{ form }}
-        <button type="submit" class="btn btn-success btn-lg px-5 shadow">Zapisz</button>
-      </form>
+              <div class="mb-4">
+                <label for="{{ form.user_comment.id_for_label }}" class="form-label">{{ form.user_comment.label }}</label>
+                {{ form.user_comment }}
+                <div class="form-text">(Opcjonalnie)</div>
+              </div>
+
+              <div class="text-center">
+                <button type="submit" class="btn btn-success btn-lg px-5 shadow">Zapisz</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const ratingInput = document.getElementById("id_user_feedback");
+      const stars = document.querySelectorAll(".star-rating .star");
+      const clearButton = document.getElementById("clear-rating");
+      const ratingLabel = document.getElementById("rating-label");
+
+      const updateStars = (value) => {
+        stars.forEach((star) => {
+          star.classList.toggle("text-warning", Number(star.dataset.value) <= value);
+          star.classList.toggle("text-muted", Number(star.dataset.value) > value);
+        });
+        ratingLabel.textContent = `${value} z 5 gwiazdek`;
+      };
+
+      const setRating = (value) => {
+        ratingInput.value = value;
+        updateStars(value);
+      };
+
+      stars.forEach((star) => {
+        star.addEventListener("click", () => setRating(Number(star.dataset.value)));
+      });
+
+      clearButton.addEventListener("click", () => setRating(0));
+
+      setRating(Number(ratingInput.value || 0));
+    });
+  </script>
 {% endblock %}

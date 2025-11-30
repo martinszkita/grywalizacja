@@ -344,6 +344,14 @@ def feedback(request):
     quiz_answer = QuizAnswer.objects.get(id=quiz_answer_id)
     form = UserFeedbackForm(request.POST or None)
 
+    if request.method != "POST":
+        form = UserFeedbackForm(
+            initial={
+                "user_feedback": quiz_answer.user_feedback or 0,
+                "user_comment": quiz_answer.user_comment,
+            }
+        )
+
     if request.method == "POST":
         if form.is_valid():
             user_feedback = form.cleaned_data["user_feedback"]
@@ -352,7 +360,7 @@ def feedback(request):
             if user_comment:
                 quiz_answer.user_comment = user_comment
 
-            if user_feedback:
+            if user_feedback is not None:
                 quiz_answer.user_feedback = user_feedback
 
             quiz_answer.save()
@@ -361,7 +369,7 @@ def feedback(request):
         messages.error(request, form.errors.as_text())
         return redirect("feedback")
 
-    context = {"form": form}
+    context = {"form": form, "star_values": range(1, 6)}
 
     return render(request, "quiz/feedback.html", context)
 
