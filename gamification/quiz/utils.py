@@ -369,5 +369,4 @@ def _clean_wsd_context_text(str_to_remove:str):
             
             
 if __name__ == "__main__":
-    s = '##K:'
-    _clean_wsd_context_text(s)
+    print('dupa')

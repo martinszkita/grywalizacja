@@ -5,10 +5,10 @@
 {% endblock %}
 
 {% block content %}
-  <div class="container header-top">
-    <div class="card shadow-sm mb-4">
+  {% comment %} <div class="container header-top"> {% endcomment %}
+    <div class="card shadow-sm mb-2">
       <div class="card-body">
-        <h1 class="card-title mb-4 text-center">Gamifikacja w procesie oceny siły relacji semantycznej w Wordnecie</h1>
+        <h2 class="card-title mb-4 text-center">Gamifikacja w procesie oceny siły relacji semantycznej w Wordnecie</h1>
         <h4 class="text-muted text-center mb-4">Marcin Poźniak</h4>
         <p class="lead text-center">
           Quiz, który za chwilę wypełnisz, ma na celu zbadanie użycia
@@ -17,24 +17,20 @@
       </div>
     </div>
 
-    <div class="card shadow-sm mb-4">
+    <div class="card shadow-sm mb-2">
       <div class="card-body">
-        <h4 class="mb-3">Quiz składa się z 3 części</h4>
-        <ul class="list-group mb-4">
+        <h4 class="mb-3">Quiz składa się z <b>3 części</b> po <b>20 pytań</b> każda</h4>
+        <ul class="list-group mb-2">
           <li class="list-group-item">Wybór najlepiej pasującego słowa</li>
           <li class="list-group-item">Odgadnięcie zamienionego w zdaniu słowa</li>
           <li class="list-group-item">Wybranie pasującej definicji do kontekstu definicji słowa</li>
         </ul>
 
-        <h4 class="mb-3">Szczegóły</h4>
-
-        <ul class="list-group mb-4">
+        <ul class="list-group mb-2">
           <li class="list-group-item">Na początku wybierzesz najciekawszą dla siebie tematykę pytań</li>
-          <li class="list-group-item">Każda część składa się z 20 pytań</li>
           <li class="list-group-item">W każdym pytaniu jest możliwość zostawienia notatki/komentarza do tego konkretnego pytania</li>
           <li class="list-group-item">Całość zajmie około 10–15 minut</li>
-          <li class="list-group-item">Nie ma tutaj złych odpowiedzi 🙂</li>
-          <li class="list-group-item">Po ukończeniu możesz ocenić quiz i dasz ewentualny feedback</li>
+          <li class="list-group-item">Po ukończeniu możesz ocenić quiz i dać ewentualny feedback</li>
         </ul>
       </div>
     </div>
@@ -42,14 +38,9 @@
     <div class="alert alert-success text-center shadow-sm">
       <h4 class="mb-0">Dziękuję z góry za każdą odpowiedź i opinie! 🙌</h4>
     </div>
-  </div>
+  {% comment %} </div> {% endcomment %}
 
-  
-    <div class="text-center shadow-sm">
-      <a href="{% url 'topic_choice' %}">
-        <button type="button" class="btn btn-primary">Przejdź do quizu!</button>
-      </a>
-      
-    </div>
-  
+  <div class="text-center shadow-sm">
+    <a href="{% url 'topic_choice' %}"><button type="button" class="btn btn-primary">Przejdź do quizu!</button></a>
+  </div>
 {% endblock %}

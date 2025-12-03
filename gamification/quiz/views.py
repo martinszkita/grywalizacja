@@ -22,7 +22,7 @@ QUESTION_ORDER = [
     ),
     ("wsd", Question.QuestionType.WSD, WsdQuestionForm, "quiz/wsd_question.html"),
 ]
-QUESTION_PER_SECTION = 1
+QUESTION_PER_SECTION = 20
 
 QUESTION_SECTION_MAP = {
     slug: {
@@ -33,11 +33,6 @@ QUESTION_SECTION_MAP = {
     }
     for slug, question_type, form, template in QUESTION_ORDER
 }
-
-
-# Create your views here.
-def quiz(request):
-    return redirect("start_quiz")
 
 def quiz_info(request):
     return render(request, "quiz/quiz_info.html", {})
