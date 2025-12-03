@@ -55,7 +55,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'quiz',
     'gamification',
-    'bootstrap5',
+    'django_bootstrap5',
     'django_extensions',
 ]
 
