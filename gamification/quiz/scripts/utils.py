@@ -6,16 +6,13 @@ from operator import itemgetter
 # do ladnego printowania
 from pprint import pprint
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "gamification.settings")
-django.setup()
-
 import random
 from transformers import pipeline
-# import morfeusz2
-# import plwordnet
-# import pickle
+import morfeusz2
+import plwordnet
+import pickle
 
-from .models import *
+from quiz.models import *
 
 DATA_PATH = "/home/marcin/grywalizacja/gamification/quiz/data/"
 SENTENCES_PER_QUESTION_TYPE = 20
@@ -28,9 +25,9 @@ WHICH_BEST_FILL_MASK_ANSWER = (
 BEST_GR_K = 5 
 WORST_GR_K = 10
 
-# morf = morfeusz2.Morfeusz()
-# with open("/home/marcin/grywalizacja/wordnet.pkl", "rb") as f:
-#     wn = pickle.load(f)
+morf = morfeusz2.Morfeusz()
+with open("/home/marcin/grywalizacja/wordnet.pkl", "rb") as f:
+    wn = pickle.load(f)
 
 SKIP_WORDS = """
 a acz aczkolwiek aż albo ale ani aniżeli aby bowiem bądź bo by był była było byli bez bardziej bardzo będą będzie będący będąca będące
@@ -147,20 +144,18 @@ def create_guess_replacement_data():
                 replacement_index = random.randint(0, s_len - 1)
                 sentence_list[replacement_index] = "<mask>"
                 
-                which_best_result = random.randint([i for i in range(BEST_GR_K, WORST_GR_K)])
-                results = fill_mask(" ".join(sentence_list), top_k=which_best_result)[-1] # zwraca tylko jeden wynik na razie
-
+                which_best_result = random.choice([i for i in range(BEST_GR_K, WORST_GR_K)])
+                result = fill_mask(" ".join(sentence_list), top_k=which_best_result)[-1] # zwraca tylko jeden wynik na razie
                 question_data["replacement_index"] = replacement_index
-                question_data["choices"] = []
-
-                # dodanie danych z herberta
-                for result in results:
-                    choice = {}
-                    choice["replacement_str"] = result["token_str"]
-                    choice["replacement_score"] = result["score"]
-                    choice["which_best"] = which_best_result
-                    choice["source"] = "herbert"
-                    question_data["choices"].append(choice)
+                
+                choice = {
+                    "replacement_str":result["token_str"],
+                    "replacement_score":result["score"],
+                    "which_best":which_best_result,
+                    "source":"herbert"
+                }
+                
+                question_data["choices"] = choice
 
                 # dodanie synonimów z wordnetu
                 replacement_str = sentence_list[replacement_index]
@@ -205,11 +200,11 @@ def get_synonyms(word):
 
     base_form = get_base_form_and_tag(word)["base_form"].split(":")[0]
     base_form_tag = get_base_form_and_tag(word)["form_tag"]
-    synset = get_synset_words(base_form)
+    synset = get_synset_entries(base_form)['results']
     new_forms = set()
 
     for s in synset:
-        new_form = generate_given_form(s, base_form_tag)
+        new_form = generate_given_form(s['word'], base_form_tag)
         if new_form is None or new_form == word:
             continue
         new_forms.add(new_form)
@@ -372,4 +367,5 @@ def _clean_wsd_context_text(str_to_remove:str):
             e['entry']['context_text'] = text.strip()
         q.save()
             
-            
+def run():
+    create_guess_replacement_data()
